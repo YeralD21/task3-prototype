@@ -36,6 +36,8 @@ def test_default_api_catalog_and_existing_filters() -> None:
                     assert DATASET_ID not in {item["id"] for item in filtered.json()}
                 if query in ({"language": "aym"}, {"modality": "parallel_text"}):
                     assert common_voice not in {item["id"] for item in filtered.json()}
-            assert client.get(f"/api/v1/datasets/{DATASET_ID}/records").json() == []
+            empty_page = client.get(f"/api/v1/datasets/{DATASET_ID}/records").json()
+            assert empty_page["items"] == []
+            assert empty_page["total"] == 0
     finally:
         get_dataset_service.cache_clear()

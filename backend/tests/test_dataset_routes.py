@@ -30,7 +30,8 @@ def test_list_dataset_records(client: TestClient) -> None:
     response = client.get(f"/api/v1/datasets/{SAMPLE_DATASET_ID}/records")
 
     assert response.status_code == 200
-    assert len(response.json()) == 3
+    assert len(response.json()["items"]) == 3
+    assert response.json()["total"] == 3
 
 
 def test_records_endpoint_pagination(client: TestClient) -> None:
@@ -40,7 +41,7 @@ def test_records_endpoint_pagination(client: TestClient) -> None:
     )
 
     assert response.status_code == 200
-    assert [record["id"] for record in response.json()] == ["synthetic-record-003"]
+    assert [record["id"] for record in response.json()["items"]] == ["synthetic-record-003"]
 
 
 def test_records_endpoint_language_filter(client: TestClient) -> None:
@@ -50,4 +51,18 @@ def test_records_endpoint_language_filter(client: TestClient) -> None:
     )
 
     assert response.status_code == 200
-    assert len(response.json()) == 3
+    assert len(response.json()["items"]) == 3
+
+
+def test_records_endpoint_text_query_and_pagination(client: TestClient) -> None:
+    response = client.get(
+        f"/api/v1/datasets/{SAMPLE_DATASET_ID}/records",
+        params={"q": "SYNTHETIC", "limit": 1, "offset": 1},
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["total"] == 3
+    assert payload["limit"] == 1
+    assert payload["offset"] == 1
+    assert payload["items"][0]["source_record_id"] == "synthetic-source-record-002"

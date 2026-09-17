@@ -36,3 +36,16 @@ export function availability(metadata: Record<string, unknown> | null): string {
     return "Catalogado — requiere obtener datos desde la fuente oficial";
   return "Disponibilidad local no especificada";
 }
+
+export const recordTranslation = (value: string | null | undefined) =>
+  value?.trim() || null;
+
+export function emptyRecordsMessage(
+  availableLocally: unknown,
+  hasQuery: boolean,
+): string {
+  if (availableLocally === false)
+    return "Este recurso está catalogado, pero sus registros no están disponibles localmente.";
+  if (hasQuery) return "No se encontraron registros para esta búsqueda.";
+  return "Este dataset no contiene registros disponibles en esta instalación.";
+}

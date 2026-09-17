@@ -10,7 +10,8 @@ from app.repositories.dataset_repository import (
     DatasetRepositoryError,
     LocalDatasetRepository,
 )
-from app.schemas.canonical import CorpusRecord, Dataset
+from app.schemas.canonical import Dataset
+from app.schemas.registry import CorpusRecordPage
 from app.services.dataset_service import DatasetService
 
 router = APIRouter(prefix="/datasets", tags=["datasets"])
@@ -68,22 +69,27 @@ def get_dataset(
         _raise_http_error(error)
 
 
-@router.get("/{dataset_id}/records", response_model=list[CorpusRecord])
+@router.get("/{dataset_id}/records", response_model=CorpusRecordPage)
 def list_dataset_records(
     dataset_id: str,
     limit: int = Query(default=50, ge=1, le=500),
     offset: int = Query(default=0, ge=0),
     language: str | None = None,
     language_variety: str | None = None,
+    q: str | None = None,
     service: DatasetService = Depends(get_dataset_service),
-) -> list[CorpusRecord]:
+) -> CorpusRecordPage:
     try:
-        return service.get_dataset_records(
+        page = service.get_dataset_records(
             dataset_id,
             limit=limit,
             offset=offset,
             language=language,
             language_variety=language_variety,
+            q=q,
+        )
+        return CorpusRecordPage(
+            items=page.items, total=page.total, limit=limit, offset=offset
         )
     except DatasetRepositoryError as error:
         _raise_http_error(error)

@@ -58,3 +58,33 @@ export interface Filters {
   modality: string;
   task: string;
 }
+
+export interface CorpusRecord {
+  id: string;
+  dataset_id: string;
+  source_record_id: string;
+  provenance: ProvenanceInfo;
+  language: Language | null;
+  language_code: string | null;
+  language_variety: LanguageVariety | null;
+  text: string;
+  translation: string | null;
+  translation_language: Language | null;
+  audio_id: string | null;
+  speaker_id: string | null;
+  metadata: Record<string, unknown> | null;
+}
+
+export interface CorpusRecordPage {
+  items: CorpusRecord[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface RecordFilters {
+  q?: string;
+  language?: string;
+  limit: number;
+  offset: number;
+}

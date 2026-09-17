@@ -23,7 +23,8 @@ def test_filter_datasets_by_task(service: DatasetService) -> None:
 
 
 def test_paginate_records(service: DatasetService) -> None:
-    records = service.get_dataset_records(SAMPLE_DATASET_ID, limit=1, offset=1)
+    page = service.get_dataset_records(SAMPLE_DATASET_ID, limit=1, offset=1)
 
-    assert len(records) == 1
-    assert records[0].id == "synthetic-record-002"
+    assert page.total == 3
+    assert len(page.items) == 1
+    assert page.items[0].id == "synthetic-record-002"

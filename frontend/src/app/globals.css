@@ -38,6 +38,10 @@ button:hover,
 .button:hover {
   background: #173f32;
 }
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
 :focus-visible {
   outline: 3px solid #aa531c;
   outline-offset: 4px;
@@ -128,6 +132,17 @@ select {
   border-radius: 4px;
   padding: 12px 10px;
   font-size: 14px;
+}
+input {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  background: white;
+  color: var(--ink);
+  border: 1px solid #a3b3a9;
+  border-radius: 4px;
+  padding: 12px 10px;
+  font: inherit;
 }
 .secondary {
   background: transparent;
@@ -329,6 +344,95 @@ footer {
   font-size: 14px;
   overflow-wrap: anywhere;
 }
+.explorer {
+  border-top: 1px solid var(--line);
+  padding: 48px 0 20px;
+}
+.explorer-title {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 30px;
+  margin-bottom: 24px;
+}
+.explorer-title h2 {
+  font-family: Georgia, serif;
+  font-size: 34px;
+  font-weight: normal;
+  margin: 0;
+}
+.explorer-title > p {
+  color: var(--muted);
+  max-width: 410px;
+}
+.record-search {
+  background: #e9eee5;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 22px;
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  gap: 16px;
+  align-items: end;
+  margin-bottom: 26px;
+}
+.record-search label {
+  font-size: 12px;
+  font-weight: bold;
+}
+.record-list {
+  display: grid;
+  gap: 18px;
+}
+.record-card {
+  background: white;
+  border: 1px solid var(--line);
+  border-left: 4px solid #517f60;
+  border-radius: 6px;
+  padding: 25px;
+}
+.record-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.record-text {
+  font-family: Georgia, serif;
+  font-size: 21px;
+  color: var(--ink);
+}
+.translation {
+  background: #f4f5f0;
+  border-left: 2px solid #b9c6ba;
+  padding: 13px 16px;
+  margin: 18px 0;
+}
+.translation p {
+  margin-bottom: 0;
+}
+.record-trace {
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 20px;
+  padding-top: 12px;
+  font-size: 13px;
+}
+.record-trace > div {
+  margin: 3px 0;
+}
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 28px 0;
+}
+.empty-records h3 {
+  font-family: Georgia, serif;
+  font-size: 23px;
+  font-weight: normal;
+}
 .panel h2 {
   font-family: Georgia, serif;
   font-size: 25px;
@@ -397,6 +501,16 @@ footer {
     flex-direction: column;
     align-items: stretch;
     padding: 18px;
+  }
+  .record-search {
+    grid-template-columns: 1fr;
+  }
+  .explorer-title {
+    align-items: start;
+    flex-direction: column;
+  }
+  .record-trace {
+    grid-template-columns: 1fr;
   }
   .grid,
   .detail-grid {

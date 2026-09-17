@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
   ApiError,
+  buildRecordsPath,
   getDataset,
   listDatasets,
   queryString,
@@ -14,12 +15,19 @@ import {
   safeUrl,
   text,
   values,
+  emptyRecordsMessage,
+  recordTranslation,
 } from "../src/services/display.ts";
 
 test("both catalog manifests can be presented without implying download rights", () => {
-  const readManifest = (path: string) => JSON.parse(readFileSync(new URL(path, import.meta.url), "utf8"));
-  const commonVoice = readManifest("../../datasets/registry/quechua/common-voice-puno-quechua.json");
-  const americas = readManifest("../../datasets/registry/aymara/americasnlp-aymara-spanish.json");
+  const readManifest = (path: string) =>
+    JSON.parse(readFileSync(new URL(path, import.meta.url), "utf8"));
+  const commonVoice = readManifest(
+    "../../datasets/registry/quechua/common-voice-puno-quechua.json",
+  );
+  const americas = readManifest(
+    "../../datasets/registry/aymara/americasnlp-aymara-spanish.json",
+  );
   assert.match(commonVoice.name, /Common Voice/);
   assert.equal(commonVoice.languages[0].iso_code, "qxp");
   assert.equal(values(commonVoice.modalities), "Audio · Texto");
@@ -60,6 +68,27 @@ test("filters are encoded for the backend", () => {
     "language=aym&modality=parallel_text",
   );
   assert.equal(queryString({ language: "qxp" }), "language=qxp");
+});
+test("record search URL sends q and pagination to the backend", () => {
+  assert.equal(
+    buildRecordsPath("dataset/id", {
+      q: "  Example text  ",
+      language: "aym",
+      limit: 20,
+      offset: 40,
+    }),
+    "/datasets/dataset%2Fid/records?limit=20&offset=40&q=Example+text&language=aym",
+  );
+});
+test("empty record states distinguish local availability and no matches", () => {
+  assert.match(emptyRecordsMessage(false, false), /catalogado/);
+  assert.match(emptyRecordsMessage(false, true), /catalogado/);
+  assert.match(emptyRecordsMessage(true, true), /No se encontraron/);
+});
+test("optional translations are only presented when available", () => {
+  assert.equal(recordTranslation(null), null);
+  assert.equal(recordTranslation("  "), null);
+  assert.equal(recordTranslation("Traducción"), "Traducción");
 });
 test("API uses configured URL, keeps errors and encodes identifiers", async (t) => {
   const previous = process.env.NEXT_PUBLIC_API_URL;

@@ -3,6 +3,7 @@ import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { ApiError, getDataset } from "@/services/api";
 import DatasetMetadata from "@/components/DatasetMetadata";
+import CorpusExplorer from "@/components/CorpusExplorer";
 import type { Dataset } from "@/types/dataset";
 export default function Detail({
   params,
@@ -57,7 +58,12 @@ export default function Detail({
           <button onClick={() => setRetry(retry + 1)}>Reintentar</button>
         </div>
       )}
-      {state === "ready" && dataset && <DatasetMetadata dataset={dataset} />}
+      {state === "ready" && dataset && (
+        <>
+          <DatasetMetadata dataset={dataset} />
+          <CorpusExplorer dataset={dataset} />
+        </>
+      )}
     </div>
   );
 }

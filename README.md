@@ -19,7 +19,7 @@ El prototipo incluye un modelo canónico, Dataset Registry y adaptadores locales
 - `docs/`: documentación de arquitectura.
 - `scripts/`: automatizaciones del proyecto.
 
-Consulta [la descripción de arquitectura](docs/architecture/overview.md), [el modelo canónico](docs/architecture/data-model.md) y [el Dataset Registry](docs/architecture/dataset-registry.md).
+Consulta [la descripción de arquitectura](docs/architecture/overview.md), [el modelo canónico](docs/architecture/data-model.md), [el Dataset Registry](docs/architecture/dataset-registry.md) y [Corpus Explorer](docs/features/corpus-explorer.md).
 
 ## Tecnologías
 
@@ -67,6 +67,7 @@ Invoke-RestMethod http://localhost:8000/api/v1/datasets
 Invoke-RestMethod http://localhost:8000/api/v1/datasets/synthetic-development-dataset
 Invoke-RestMethod http://localhost:8000/api/v1/datasets/common-voice-scripted-speech-qxp-26.0
 Invoke-RestMethod "http://localhost:8000/api/v1/datasets/synthetic-development-dataset/records?limit=20&offset=0"
+Invoke-RestMethod "http://localhost:8000/api/v1/datasets/synthetic-development-dataset/records?q=translation&limit=20&offset=0"
 ```
 
 Las fuentes predeterminadas son `data/samples/` (`DATASET_REGISTRY_PATH`) y `datasets/registry/` (`DATASET_CATALOG_PATH`). Ambas rutas pueden configurarse mediante variables de entorno.
@@ -120,7 +121,9 @@ Si se utiliza un archivo `.env` para FastAPI, debe estar en el directorio de eje
 
 El App Router proporciona catálogo y `/datasets/[id]`; `services/api.ts` centraliza
 las peticiones, `types/` refleja el contrato canónico y los componentes presentan
-las fichas. Los filtros se envían al backend. No se ofrecen descargas de corpus.
+las fichas. Los filtros se envían al backend. La ficha incluye Corpus Explorer con
+búsqueda textual, filtro de idioma y paginación; si el corpus no está instalado,
+explica cómo acudir a la fuente oficial. No se ofrecen descargas de corpus.
 La interfaz muestra carga, fallos de conexión, resultados vacíos y recursos inexistentes.
 
 Comprobaciones frontend desde `frontend/`:
@@ -141,4 +144,4 @@ python -m pytest
 
 ## Estado actual
 
-El Registry cataloga Common Voice Scripted Speech 26.0 para Puno Quechua (`qxp`) y AmericasNLP 2021 Aymara–Español (`aym`/`es`), aunque los corpus no estén descargados. El frontend permite consultar el catálogo, filtrar por idioma/modalidad/uso y abrir fichas con procedencia, licencia y disponibilidad. Los adaptadores leen copias locales obtenidas manualmente. La API publica metadata y registros sintéticos; aún no publica automáticamente los resultados de los adaptadores. No existen persistencia PostgreSQL, autenticación, embeddings, búsqueda semántica, reproducción de audio ni descarga automática.
+El Registry cataloga Common Voice Scripted Speech 26.0 para Puno Quechua (`qxp`) y AmericasNLP 2021 Aymara–Español (`aym`/`es`), aunque los corpus no estén descargados. El frontend permite consultar el catálogo, filtrar datasets y explorar registros locales mediante búsqueda textual y paginación. Los adaptadores leen copias locales obtenidas manualmente. La API publica metadata y registros sintéticos; aún no publica automáticamente los resultados de los adaptadores. No existen persistencia PostgreSQL, autenticación, embeddings, búsqueda semántica, reproducción de audio ni descarga automática.

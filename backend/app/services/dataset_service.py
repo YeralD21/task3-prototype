@@ -4,6 +4,14 @@ from app.repositories.dataset_repository import DatasetRepository
 from app.schemas.canonical import CorpusRecord, Dataset, Language, LanguageVariety
 
 
+class CorpusRecordPage:
+    """Resultado filtrado antes de convertirlo en una respuesta HTTP."""
+
+    def __init__(self, items: list[CorpusRecord], total: int) -> None:
+        self.items = items
+        self.total = total
+
+
 class DatasetService:
     """Coordina consultas y filtros sin conocer el almacenamiento concreto."""
 
@@ -41,7 +49,8 @@ class DatasetService:
         offset: int = 0,
         language: str | None = None,
         language_variety: str | None = None,
-    ) -> list[CorpusRecord]:
+        q: str | None = None,
+    ) -> CorpusRecordPage:
         if not 1 <= limit <= 500:
             raise ValueError("limit must be between 1 and 500")
         if offset < 0:
@@ -56,8 +65,18 @@ class DatasetService:
                 [record.language_variety] if record.language_variety else None,
                 language_variety,
             )
+            and self._record_matches_query(record, q)
         ]
-        return filtered[offset : offset + limit]
+        return CorpusRecordPage(filtered[offset : offset + limit], len(filtered))
+
+    @staticmethod
+    def _record_matches_query(record: CorpusRecord, query: str | None) -> bool:
+        if query is None or not query.strip():
+            return True
+        normalized = query.strip().casefold()
+        return normalized in record.text.casefold() or normalized in (
+            record.translation or ""
+        ).casefold()
 
     @classmethod
     def _matches_language(
