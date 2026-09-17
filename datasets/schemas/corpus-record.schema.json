@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://task3-prototype.local/schemas/corpus-record.schema.json",
+  "title": "CorpusRecord",
+  "description": "Registro lingüístico canónico con trazabilidad explícita.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "dataset_id", "source_record_id", "provenance", "text"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "dataset_id": { "type": "string", "minLength": 1 },
+    "source_record_id": { "type": "string", "minLength": 1 },
+    "provenance": { "$ref": "#/$defs/provenanceInfo" },
+    "language": {
+      "anyOf": [{ "$ref": "#/$defs/language" }, { "type": "null" }]
+    },
+    "language_code": { "type": ["string", "null"] },
+    "language_variety": {
+      "anyOf": [{ "$ref": "#/$defs/languageVariety" }, { "type": "null" }]
+    },
+    "text": { "type": "string", "minLength": 1 },
+    "translation": { "type": ["string", "null"] },
+    "translation_language": {
+      "anyOf": [{ "$ref": "#/$defs/language" }, { "type": "null" }]
+    },
+    "audio_id": { "type": ["string", "null"] },
+    "speaker_id": { "type": ["string", "null"] },
+    "metadata": { "$ref": "#/$defs/nullableMetadata" }
+  },
+  "$defs": {
+    "language": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "iso_code": { "type": ["string", "null"], "minLength": 1 }
+      }
+    },
+    "languageVariety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "language_code": { "type": ["string", "null"] },
+        "region": { "type": ["string", "null"] },
+        "country": { "type": ["string", "null"] },
+        "glottocode": { "type": ["string", "null"] },
+        "metadata": { "$ref": "#/$defs/nullableMetadata" }
+      }
+    },
+    "provenanceInfo": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source_name": { "type": ["string", "null"] },
+        "source_url": { "type": ["string", "null"] },
+        "organization": { "type": ["string", "null"] },
+        "original_dataset_id": { "type": ["string", "null"] },
+        "citation": { "type": ["string", "null"] },
+        "retrieved_at": { "type": ["string", "null"], "format": "date-time" },
+        "notes": { "type": ["string", "null"] }
+      }
+    },
+    "nullableMetadata": {
+      "type": ["object", "null"],
+      "additionalProperties": true
+    }
+  }
+}

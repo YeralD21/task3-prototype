@@ -1,0 +1,69 @@
+{
+  "id": "americasnlp-2021-aymara-spanish",
+  "name": "AmericasNLP 2021 - Aymara-Spanish",
+  "description": "Parallel Aymara-Spanish text from the 2021 Shared Task on Open Machine Translation. Training data originates from Global Voices via OPUS; development and test pairs originate from AmericasNLI translations of Spanish XNLI.",
+  "languages": [{"name": "Aymara", "iso_code": "aym"}, {"name": "Spanish", "iso_code": "es"}],
+  "language_varieties": [{
+    "id": "ayr",
+    "name": "Central Aymara (Aymara La Paz jilata)",
+    "language_code": "aym",
+    "region": null,
+    "country": null,
+    "glottocode": null,
+    "metadata": {
+      "splits": ["dev", "test"],
+      "documented_variety_code": "ayr",
+      "evidence_url": "https://aclanthology.org/2021.americasnlp-1.23/",
+      "notes": "Scope restricted to development/test; train variety remains unknown. Source file code aym is preserved."
+    }
+  }],
+  "countries": null,
+  "regions": null,
+  "modalities": ["parallel_text"],
+  "tasks": ["machine_translation"],
+  "domains": null,
+  "source_url": "https://github.com/AmericasNLP/americasnlp2021/tree/main/data/aymara-spanish",
+  "source_organization": "AmericasNLP 2021 Shared Task organizers",
+  "license": {
+    "name": null,
+    "url": null,
+    "commercial_use": null,
+    "redistribution": null,
+    "derivatives": null,
+    "attribution_required": null,
+    "notes": "No unambiguous license covering these combined train/dev/test files was established from the official repository documentation. Original sources differ by split. Public availability and requests to cite are not permission grants; verify conditions with the providers before reuse."
+  },
+  "provenance": {
+    "source_name": "AmericasNLP 2021 Shared Task on Open Machine Translation",
+    "source_url": "https://github.com/AmericasNLP/americasnlp2021",
+    "organization": "AmericasNLP",
+    "original_dataset_id": "data/aymara-spanish",
+    "citation": "Mager et al. (2021), Findings of the AmericasNLP 2021 Shared Task on Open Machine Translation for Indigenous Languages of the Americas. https://aclanthology.org/2021.americasnlp-1.23/",
+    "retrieved_at": null,
+    "notes": "Catalog documentation reviewed; corpus not retrieved. Train: Global Voices via OPUS (Tiedemann, 2012). Dev/test: AmericasNLI from Spanish XNLI; see organizer paper sections 3.1 and 3.2."
+  },
+  "citation": "Mager et al. (2021), https://aclanthology.org/2021.americasnlp-1.23/; Tiedemann (2012), Parallel Data, Tools and Interfaces in OPUS, https://aclanthology.org/L12-1246/.",
+  "record_count": null,
+  "token_count": null,
+  "speaker_count": null,
+  "audio_hours": null,
+  "created_at": null,
+  "updated_at": null,
+  "metadata": {
+    "cataloged": true,
+    "available_locally": false,
+    "edition": "AmericasNLP 2021",
+    "source_revision": null,
+    "source_codes": {"aymara": "aym", "spanish": "es"},
+    "canonical_direction": "aym-to-es",
+    "format": "UTF-8 text, one sentence per line, aligned file pairs without headers",
+    "split_sources": {
+      "train": "Global Voices via OPUS",
+      "dev": "AmericasNLI / Spanish XNLI",
+      "test": "AmericasNLI / Spanish XNLI"
+    },
+    "test_source_url": "https://github.com/AmericasNLP/americasnlp2021/tree/main/test_data",
+    "download_policy": "manual",
+    "documentation_url": "https://aclanthology.org/2021.americasnlp-1.23/"
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://task3-prototype.local/schemas/dataset.schema.json",
+  "title": "Dataset",
+  "description": "Metadata canónica de una colección lingüística.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "name", "license", "provenance"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "description": { "type": ["string", "null"] },
+    "languages": {
+      "type": ["array", "null"],
+      "items": { "$ref": "#/$defs/language" }
+    },
+    "language_varieties": {
+      "type": ["array", "null"],
+      "items": { "$ref": "#/$defs/languageVariety" }
+    },
+    "countries": { "$ref": "#/$defs/nullableStringArray" },
+    "regions": { "$ref": "#/$defs/nullableStringArray" },
+    "modalities": { "$ref": "#/$defs/nullableStringArray" },
+    "tasks": { "$ref": "#/$defs/nullableStringArray" },
+    "domains": { "$ref": "#/$defs/nullableStringArray" },
+    "source_url": { "type": ["string", "null"] },
+    "source_organization": { "type": ["string", "null"] },
+    "license": { "$ref": "#/$defs/licenseInfo" },
+    "provenance": { "$ref": "#/$defs/provenanceInfo" },
+    "citation": { "type": ["string", "null"] },
+    "record_count": { "type": ["integer", "null"], "minimum": 0 },
+    "token_count": { "type": ["integer", "null"], "minimum": 0 },
+    "speaker_count": { "type": ["integer", "null"], "minimum": 0 },
+    "audio_hours": { "type": ["number", "null"], "minimum": 0 },
+    "created_at": { "type": ["string", "null"], "format": "date-time" },
+    "updated_at": { "type": ["string", "null"], "format": "date-time" },
+    "metadata": { "$ref": "#/$defs/nullableMetadata" }
+  },
+  "$defs": {
+    "language": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "iso_code": { "type": ["string", "null"], "minLength": 1 }
+      }
+    },
+    "languageVariety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "language_code": { "type": ["string", "null"] },
+        "region": { "type": ["string", "null"] },
+        "country": { "type": ["string", "null"] },
+        "glottocode": { "type": ["string", "null"] },
+        "metadata": { "$ref": "#/$defs/nullableMetadata" }
+      }
+    },
+    "licenseInfo": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "url": { "type": ["string", "null"] },
+        "commercial_use": { "type": ["boolean", "null"] },
+        "redistribution": { "type": ["boolean", "null"] },
+        "derivatives": { "type": ["boolean", "null"] },
+        "attribution_required": { "type": ["boolean", "null"] },
+        "notes": { "type": ["string", "null"] }
+      }
+    },
+    "provenanceInfo": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source_name": { "type": ["string", "null"] },
+        "source_url": { "type": ["string", "null"] },
+        "organization": { "type": ["string", "null"] },
+        "original_dataset_id": { "type": ["string", "null"] },
+        "citation": { "type": ["string", "null"] },
+        "retrieved_at": { "type": ["string", "null"], "format": "date-time" },
+        "notes": { "type": ["string", "null"] }
+      }
+    },
+    "nullableStringArray": {
+      "type": ["array", "null"],
+      "items": { "type": "string" }
+    },
+    "nullableMetadata": {
+      "type": ["object", "null"],
+      "additionalProperties": true
+    }
+  }
+}

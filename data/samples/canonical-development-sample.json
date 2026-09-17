@@ -1,0 +1,152 @@
+{
+  "sample_type": "synthetic",
+  "development_only": true,
+  "dataset": {
+    "id": "synthetic-development-dataset",
+    "name": "Synthetic canonical model sample",
+    "description": "Artificial data used only to exercise the canonical contract.",
+    "languages": [
+      {
+        "name": "Synthetic source language",
+        "iso_code": "und"
+      }
+    ],
+    "language_varieties": null,
+    "countries": null,
+    "regions": null,
+    "modalities": ["text", "audio", "parallel_text"],
+    "tasks": ["machine_translation"],
+    "domains": null,
+    "source_url": null,
+    "source_organization": null,
+    "license": {
+      "name": null,
+      "url": null,
+      "commercial_use": null,
+      "redistribution": null,
+      "derivatives": null,
+      "attribution_required": null,
+      "notes": "Unknown license for synthetic development data; no permissions are implied."
+    },
+    "provenance": {
+      "source_name": "task3-prototype synthetic fixture",
+      "source_url": null,
+      "organization": null,
+      "original_dataset_id": "synthetic-development-source",
+      "citation": null,
+      "retrieved_at": null,
+      "notes": "Synthetic and development_only; not real linguistic data."
+    },
+    "citation": null,
+    "record_count": 3,
+    "token_count": null,
+    "speaker_count": 1,
+    "audio_hours": null,
+    "created_at": null,
+    "updated_at": null,
+    "metadata": {
+      "synthetic": true,
+      "development_only": true
+    }
+  },
+  "speakers": [
+    {
+      "id": "synthetic-speaker-001",
+      "dataset_id": "synthetic-development-dataset",
+      "source_speaker_id": null,
+      "language": null,
+      "language_variety": null,
+      "region": null,
+      "metadata": {
+        "synthetic": true,
+        "development_only": true
+      }
+    }
+  ],
+  "audio_resources": [
+    {
+      "id": "synthetic-audio-001",
+      "dataset_id": "synthetic-development-dataset",
+      "source_audio_id": "synthetic-source-audio-001",
+      "path_or_url": null,
+      "duration_seconds": null,
+      "mime_type": null,
+      "sample_rate": null,
+      "metadata": {
+        "synthetic": true,
+        "development_only": true
+      }
+    }
+  ],
+  "records": [
+    {
+      "id": "synthetic-record-001",
+      "dataset_id": "synthetic-development-dataset",
+      "source_record_id": "synthetic-source-record-001",
+      "provenance": {
+        "source_name": "task3-prototype synthetic fixture",
+        "source_url": null,
+        "organization": null,
+        "original_dataset_id": "synthetic-development-source",
+        "citation": null,
+        "retrieved_at": null,
+        "notes": "Synthetic and development_only."
+      },
+      "language": { "name": "Synthetic source language", "iso_code": "und" },
+      "language_code": "und",
+      "language_variety": null,
+      "text": "[synthetic source-language sentence 001]",
+      "translation": null,
+      "translation_language": null,
+      "audio_id": null,
+      "speaker_id": null,
+      "metadata": { "synthetic": true, "development_only": true }
+    },
+    {
+      "id": "synthetic-record-002",
+      "dataset_id": "synthetic-development-dataset",
+      "source_record_id": "synthetic-source-record-002",
+      "provenance": {
+        "source_name": "task3-prototype synthetic fixture",
+        "source_url": null,
+        "organization": null,
+        "original_dataset_id": "synthetic-development-source",
+        "citation": null,
+        "retrieved_at": null,
+        "notes": "Synthetic and development_only."
+      },
+      "language": { "name": "Synthetic source language", "iso_code": "und" },
+      "language_code": "und",
+      "language_variety": null,
+      "text": "[synthetic source-language sentence 002]",
+      "translation": "[synthetic Spanish translation 002]",
+      "translation_language": { "name": "Spanish", "iso_code": "es" },
+      "audio_id": null,
+      "speaker_id": null,
+      "metadata": { "synthetic": true, "development_only": true }
+    },
+    {
+      "id": "synthetic-record-003",
+      "dataset_id": "synthetic-development-dataset",
+      "source_record_id": "synthetic-source-record-003",
+      "provenance": {
+        "source_name": "task3-prototype synthetic fixture",
+        "source_url": null,
+        "organization": null,
+        "original_dataset_id": "synthetic-development-source",
+        "citation": null,
+        "retrieved_at": null,
+        "notes": "Synthetic and development_only."
+      },
+      "language": { "name": "Synthetic source language", "iso_code": "und" },
+      "language_code": "und",
+      "language_variety": null,
+      "text": "[synthetic source-language sentence 003]",
+      "translation": null,
+      "translation_language": null,
+      "audio_id": "synthetic-audio-001",
+      "speaker_id": "synthetic-speaker-001",
+      "metadata": { "synthetic": true, "development_only": true }
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "id": "common-voice-scripted-speech-qxp-26.0",
+  "name": "Common Voice Scripted Speech 26.0 - Puno Quechua",
+  "description": "Catalog entry for Mozilla Common Voice scripted speech in Puno Quechua (Punu qhichwa). The full external dataset is not distributed by this repository.",
+  "languages": [
+    {
+      "name": "Quechua",
+      "iso_code": "qxp"
+    }
+  ],
+  "language_varieties": [
+    {
+      "id": "qxp",
+      "name": "Puno Quechua / Punu qhichwa",
+      "language_code": "qxp",
+      "region": "Puno",
+      "country": "Peru",
+      "glottocode": null,
+      "metadata": {
+        "name_as_cataloged_by_source": "Puno Quechua"
+      }
+    }
+  ],
+  "countries": ["Peru"],
+  "regions": ["Puno"],
+  "modalities": ["audio", "text"],
+  "tasks": ["automatic_speech_recognition"],
+  "domains": null,
+  "source_url": "https://commonvoice.mozilla.org/en/datasets",
+  "source_organization": "Mozilla Foundation / Common Voice",
+  "license": {
+    "name": "CC0-1.0",
+    "url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "commercial_use": true,
+    "redistribution": false,
+    "derivatives": true,
+    "attribution_required": false,
+    "notes": "CC0-1.0 is the dataset license. Mozilla Data Collective access terms are additive: do not attempt to identify contributors and do not re-host or redistribute this dataset from this project. Obtain the complete dataset from the official source and follow the current terms shown there."
+  },
+  "provenance": {
+    "source_name": "Common Voice Scripted Speech 26.0 - Puno Quechua",
+    "source_url": "https://commonvoice.mozilla.org/en/datasets",
+    "organization": "Mozilla Foundation / Common Voice",
+    "original_dataset_id": "common-voice-scripted-speech-26.0-qxp",
+    "citation": "Ardila et al. (2020), Common Voice: A Massively-Multilingual Speech Corpus, LREC 2020.",
+    "retrieved_at": "2026-09-16T00:00:00-05:00",
+    "notes": "Metadata verified against the official Common Voice dataset catalog and cv-dataset release statistics. Full data must be obtained from Mozilla Data Collective."
+  },
+  "citation": "Ardila, R. et al. (2020). Common Voice: A Massively-Multilingual Speech Corpus. Proceedings of LREC 2020, 4211-4215.",
+  "record_count": 25423,
+  "token_count": null,
+  "speaker_count": 81,
+  "audio_hours": 34.88,
+  "created_at": null,
+  "updated_at": null,
+  "metadata": {
+    "cataloged": true,
+    "available_locally": false,
+    "dataset_type": "scripted_speech",
+    "release_version": "26.0",
+    "release_cutoff_date": "2026-06-12",
+    "validated_record_count": 22727,
+    "validated_audio_hours": 31.18,
+    "official_statistics_url": "https://github.com/common-voice/cv-dataset/blob/main/datasets/scripted-speech/cv-corpus-26.0-2026-06-12.json",
+    "download_policy": "manual_from_official_source_only",
+    "do_not_rehost": true,
+    "do_not_attempt_speaker_identification": true
+  }
+}

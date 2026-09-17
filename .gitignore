@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Node / Next.js
+node_modules/
+.next/
+
+# Environment and editor files
+.env
+.env.*
+!.env.example
+!.env.local.example
+*.tsbuildinfo
+.idea/
+.vscode/
+
+# Data artifacts (keep directory markers and small samples)
+data/raw/**
+data/interim/**
+data/processed/**
+!data/raw/**/
+!data/**/.gitkeep
+
+# Notebooks and OS files
+.ipynb_checkpoints/
+.DS_Store
+Thumbs.db
