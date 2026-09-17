@@ -70,7 +70,7 @@ Invoke-RestMethod "http://localhost:8000/api/v1/datasets/synthetic-development-d
 Invoke-RestMethod "http://localhost:8000/api/v1/datasets/synthetic-development-dataset/records?q=translation&limit=20&offset=0"
 ```
 
-Las fuentes predeterminadas son `data/samples/` (`DATASET_REGISTRY_PATH`) y `datasets/registry/` (`DATASET_CATALOG_PATH`). Ambas rutas pueden configurarse mediante variables de entorno.
+Las fuentes predeterminadas son `data/samples/` (`DATASET_REGISTRY_PATH`), `datasets/registry/` (`DATASET_CATALOG_PATH`) y `data/processed/` (`DATASET_PROCESSED_PATH`). Las rutas pueden configurarse mediante variables de entorno.
 
 El catálogo también incluye [AmericasNLP 2021 Aymara–Español](docs/datasets/americasnlp-aymara-spanish.md), con códigos `aym`/`es`, texto paralelo y licencia pendiente de determinar. Sus archivos se obtienen manualmente; el adaptador conserva splits e identificadores de línea.
 
@@ -142,6 +142,32 @@ Con el entorno virtual activo y desde `backend/`:
 python -m pytest
 ```
 
+## Ingestar un corpus local
+
+Obtén el corpus manualmente desde su proveedor y colócalo bajo `data/raw/`. Esa fuente es inmutable y permanece fuera de Git. Desde la raíz, materializa una copia canónica con:
+
+```powershell
+python scripts\ingest_dataset.py `
+  --adapter americas_nlp `
+  --source data\raw\aymara\americasnlp `
+  --output data\processed
+```
+
+También está disponible el adaptador `common_voice`. El comando valida los modelos, escribe `dataset.json`, `records.jsonl` e `ingestion-manifest.json`, y reemplaza de forma segura una materialización anterior. Common Voice referencia los clips originales sin copiarlos. Consulta [la guía del pipeline de ingestión](docs/features/ingestion-pipeline.md) para el flujo, privacidad, licencias y verificación mediante la API.
+
+## Construir y consultar el índice semántico
+
+La búsqueda semántica local usa NumPy y un `EmbeddingProvider` intercambiable. Para usar el proveedor real, instala las dependencias ML opcionales y construye el índice después de ingerir el dataset:
+
+```powershell
+python -m pip install -r backend\requirements-ml.txt
+python scripts\build_semantic_index.py `
+  --dataset americasnlp-2021-aymara-spanish `
+  --processed-root data\processed
+```
+
+El modelo se configura con `EMBEDDING_MODEL_NAME` o `--model`. Sentence Transformers puede descargarlo si no está en caché; las pruebas usan un proveedor fake sin red. El endpoint es `POST /api/v1/search/semantic`. Consulta [la guía de búsqueda semántica](docs/features/semantic-search.md) para el formato, fingerprint, reconstrucción, compatibilidad y limitaciones lingüísticas.
+
 ## Estado actual
 
-El Registry cataloga Common Voice Scripted Speech 26.0 para Puno Quechua (`qxp`) y AmericasNLP 2021 Aymara–Español (`aym`/`es`), aunque los corpus no estén descargados. El frontend permite consultar el catálogo, filtrar datasets y explorar registros locales mediante búsqueda textual y paginación. Los adaptadores leen copias locales obtenidas manualmente. La API publica metadata y registros sintéticos; aún no publica automáticamente los resultados de los adaptadores. No existen persistencia PostgreSQL, autenticación, embeddings, búsqueda semántica, reproducción de audio ni descarga automática.
+El Registry cataloga Common Voice Scripted Speech 26.0 para Puno Quechua (`qxp`) y AmericasNLP 2021 Aymara–Español (`aym`/`es`), aunque los corpus no estén descargados. El frontend permite consultar el catálogo, filtrar datasets y explorar registros locales mediante búsqueda textual y paginación. Los adaptadores y el pipeline procesan copias locales obtenidas manualmente; la API descubre sus registros e índices semánticos bajo `data/processed/`. La búsqueda semántica está disponible mediante API y todavía no tiene interfaz. No existen persistencia PostgreSQL, autenticación, reproducción de audio ni descarga automática.

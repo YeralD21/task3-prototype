@@ -1,3 +1,3 @@
 client_id	path	sentence	up_votes	down_votes	age	gender	accents	locale	synthetic	development_only
-synthetic-client-001	synthetic-clip-001.mp3	[synthetic source sentence 001]	2	0				qxp	true	true
+synthetic-client-001	synthetic-clip-001.mp3	[synthetic source sentence 001]	2	0			[synthetic Unicode metadata: á]	qxp	true	true
 		[synthetic source sentence 002]	1	0				qxp	true	true

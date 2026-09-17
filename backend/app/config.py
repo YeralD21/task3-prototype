@@ -17,6 +17,8 @@ class Settings(BaseSettings):
     database_url: str = "postgresql://task3:task3@localhost:5432/task3"
     dataset_registry_path: Path = PROJECT_ROOT / "data" / "samples"
     dataset_catalog_path: Path = PROJECT_ROOT / "datasets" / "registry"
+    dataset_processed_path: Path = PROJECT_ROOT / "data" / "processed"
+    embedding_model_name: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

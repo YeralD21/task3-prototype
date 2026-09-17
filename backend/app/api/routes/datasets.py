@@ -23,7 +23,8 @@ def get_dataset_service() -> DatasetService:
 
     settings = get_settings()
     repository = LocalDatasetRepository(
-        [settings.dataset_registry_path, settings.dataset_catalog_path]
+        [settings.dataset_registry_path, settings.dataset_catalog_path],
+        processed_directory=settings.dataset_processed_path,
     )
     return DatasetService(repository)
 

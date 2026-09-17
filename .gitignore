@@ -9,6 +9,11 @@ venv/
 node_modules/
 .next/
 
+# Local ML model downloads and caches
+.cache/huggingface/
+.huggingface/
+/models/
+
 # Environment and editor files
 .env
 .env.*
