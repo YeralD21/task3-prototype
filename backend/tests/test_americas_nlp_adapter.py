@@ -1,13 +1,9 @@
-"""Offline tests for aligned text ingestion and the multi-provider catalog."""
+"""Offline adapter tests; HTTP integration tests live in test_catalog_integration."""
 
 import socket
 from pathlib import Path
 
 import pytest
-from fastapi.testclient import TestClient
-
-from app.api.routes.datasets import get_dataset_service
-from app.main import app
 from ml.ingestion.adapters.americas_nlp_adapter import (
     AmericasNLPAdapter, AmericasNLPAdapterError,
 )
@@ -19,6 +15,7 @@ DATASET_ID = "americasnlp-2021-aymara-spanish"
 
 @pytest.fixture(autouse=True)
 def prohibit_network(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Block network calls only in adapter tests, not TestClient event loops."""
     def reject(*args: object, **kwargs: object) -> None:
         raise AssertionError("Network access forbidden in adapter tests")
     monkeypatch.setattr(socket, "create_connection", reject)
@@ -123,31 +120,3 @@ def test_invalid_split_selection(splits: tuple[str, ...]) -> None:
     with pytest.raises(AmericasNLPAdapterError):
         AmericasNLPAdapter(FIXTURES, splits=splits)
 
-
-def test_default_api_catalog_and_existing_filters() -> None:
-    # No dependency override: exercise the actual configured repository paths.
-    get_dataset_service.cache_clear()
-    try:
-        with TestClient(app) as client:
-            response = client.get("/api/v1/datasets")
-            assert response.status_code == 200
-            ids = {item["id"] for item in response.json()}
-            common_voice = "common-voice-scripted-speech-qxp-26.0"
-            assert {common_voice, DATASET_ID} <= ids
-            for query, expected in [
-                ({"language": "qxp"}, common_voice),
-                ({"language": "aym"}, DATASET_ID),
-                ({"modality": "audio"}, common_voice),
-                ({"modality": "parallel_text"}, DATASET_ID),
-                ({"task": "machine_translation"}, DATASET_ID),
-            ]:
-                filtered = client.get("/api/v1/datasets", params=query)
-                assert filtered.status_code == 200
-                assert expected in {item["id"] for item in filtered.json()}
-                if query in ({"language": "qxp"}, {"modality": "audio"}):
-                    assert DATASET_ID not in {item["id"] for item in filtered.json()}
-                if query in ({"language": "aym"}, {"modality": "parallel_text"}):
-                    assert common_voice not in {item["id"] for item in filtered.json()}
-            assert client.get(f"/api/v1/datasets/{DATASET_ID}/records").json() == []
-    finally:
-        get_dataset_service.cache_clear()
