@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ApiError, getDataset } from "@/services/api";
 import DatasetMetadata from "@/components/DatasetMetadata";
 import CorpusExplorer from "@/components/CorpusExplorer";
+import SemanticSearch from "@/components/SemanticSearch";
 import type { Dataset } from "@/types/dataset";
 export default function Detail({
   params,
@@ -62,6 +63,7 @@ export default function Detail({
         <>
           <DatasetMetadata dataset={dataset} />
           <CorpusExplorer dataset={dataset} />
+          <SemanticSearch key={dataset.id} dataset={dataset} />
         </>
       )}
     </div>

@@ -1,0 +1,41 @@
+{
+  "name": "synthetic-semantic-development-v1",
+  "synthetic": true,
+  "description": "Benchmark técnico sintético bilingüe; no representa Quechua ni Aymara ni calidad lingüística real.",
+  "records": [
+    {"id":"agriculture-1","topic":"agriculture","text":"Las familias trabajan la tierra y guardan granos para la próxima temporada."},
+    {"id":"agriculture-2","topic":"agriculture","text":"El riego ayuda a que las plantas del campo crezcan durante los meses secos."},
+    {"id":"agriculture-3","topic":"agriculture","text":"Farmers gather ripe produce after caring for the soil all year."},
+    {"id":"family-1","topic":"family","text":"Abuelos, padres y niños se reúnen para compartir historias en casa."},
+    {"id":"family-2","topic":"family","text":"Los parientes se apoyan y cuidan juntos a los más pequeños."},
+    {"id":"family-3","topic":"family","text":"Relatives celebrate together and help one another at home."},
+    {"id":"education-1","topic":"education","text":"La maestra explica una lección y los estudiantes practican en el aula."},
+    {"id":"education-2","topic":"education","text":"Los niños leen libros y resuelven ejercicios con su profesora."},
+    {"id":"education-3","topic":"education","text":"Students learn new ideas from books and classroom activities."},
+    {"id":"health-1","topic":"health","text":"La enfermera revisa al paciente y recomienda descanso y cuidados."},
+    {"id":"health-2","topic":"health","text":"El centro médico atiende a personas con dolor y fiebre."},
+    {"id":"health-3","topic":"health","text":"Doctors help sick people recover and stay well."},
+    {"id":"nature-1","topic":"nature","text":"El bosque, los ríos y las montañas forman un paisaje lleno de vida."},
+    {"id":"nature-2","topic":"nature","text":"Las aves viven entre árboles y lagunas lejos de la ciudad."},
+    {"id":"nature-3","topic":"nature","text":"Wild animals live among forests, lakes, and high peaks."},
+    {"id":"commerce-1","topic":"commerce","text":"Los vendedores ofrecen productos y negocian precios con sus clientes."},
+    {"id":"commerce-2","topic":"commerce","text":"Las personas intercambian bienes y pagan por lo que necesitan."},
+    {"id":"commerce-3","topic":"commerce","text":"Customers buy goods from merchants at a busy market."},
+    {"id":"travel-1","topic":"travel","text":"Los pasajeros preparan sus maletas antes de salir hacia otra ciudad."},
+    {"id":"travel-2","topic":"travel","text":"El autobús recorre una larga ruta entre pueblos distantes."},
+    {"id":"travel-3","topic":"travel","text":"Travelers take a train to reach a distant destination."},
+    {"id":"food-1","topic":"food","text":"La cocinera prepara una sopa con verduras para la cena."},
+    {"id":"food-2","topic":"food","text":"La mesa tiene pan, frutas y un plato caliente para compartir."},
+    {"id":"food-3","topic":"food","text":"A cook serves a warm meal made with fresh ingredients."}
+  ],
+  "queries": [
+    {"id":"q-agriculture","text":"cultivo y cosecha","relevant_record_ids":["agriculture-1","agriculture-2","agriculture-3"]},
+    {"id":"q-family","text":"hogar y vínculos entre generaciones","relevant_record_ids":["family-1","family-2","family-3"]},
+    {"id":"q-education","text":"escuela y aprendizaje","relevant_record_ids":["education-1","education-2","education-3"]},
+    {"id":"q-health","text":"bienestar y atención de una enfermedad","relevant_record_ids":["health-1","health-2","health-3"]},
+    {"id":"q-nature","text":"entorno natural con fauna y vegetación","relevant_record_ids":["nature-1","nature-2","nature-3"]},
+    {"id":"q-commerce","text":"mercado y venta","relevant_record_ids":["commerce-1","commerce-2","commerce-3"]},
+    {"id":"q-travel","text":"desplazarse a un lugar lejano","relevant_record_ids":["travel-1","travel-2","travel-3"]},
+    {"id":"q-food","text":"alimentación y preparación de una comida","relevant_record_ids":["food-1","food-2","food-3"]}
+  ]
+}

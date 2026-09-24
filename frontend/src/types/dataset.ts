@@ -88,3 +88,20 @@ export interface RecordFilters {
   limit: number;
   offset: number;
 }
+
+export interface SemanticSearchRequest {
+  query: string;
+  dataset_id: string;
+  limit: number;
+}
+
+export interface SemanticSearchItem {
+  record: CorpusRecord;
+  score: number;
+}
+
+export interface SemanticSearchResponse {
+  query: string;
+  dataset_id: string;
+  items: SemanticSearchItem[];
+}

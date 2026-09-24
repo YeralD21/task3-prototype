@@ -380,6 +380,13 @@ footer {
   font-size: 12px;
   font-weight: bold;
 }
+.semantic-form {
+  grid-template-columns: 1fr auto;
+}
+.semantic-score {
+  color: var(--green);
+  font-weight: bold;
+}
 .record-list {
   display: grid;
   gap: 18px;

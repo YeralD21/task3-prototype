@@ -38,6 +38,8 @@ python -m pip install -r backend\requirements-ml.txt
 
 El modelo se configura una sola vez mediante `EMBEDDING_MODEL_NAME` o `--model`. El valor inicial es una opción multilingüe de propósito general, no una afirmación de calidad para Quechua o Aymara. Que un modelo se describa como multilingüe no demuestra cobertura adecuada para todas las lenguas o variedades indígenas; se requiere evaluación con consultas y relevancias revisadas para cada caso.
 
+La [comparación técnica de modelos](../evaluation/embedding-model-comparison.md) recomienda provisionalmente `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`. Los tres candidatos empataron en el benchmark sintético; MiniLM se eligió por sus vectores de 384 dimensiones, tamaño y latencia de inferencia. La configuración sigue siendo reemplazable.
+
 Sentence Transformers puede descargar el modelo configurado desde Hugging Face cuando no existe en su caché. Esa acción solo ocurre al construir o consultar con el proveedor real; las pruebas nunca instancian ese proveedor ni descargan modelos. También se puede configurar una ruta local compatible como nombre del modelo.
 
 Al 17 de septiembre de 2026, NumPy 2.5.3 y PyTorch 2.14 publican wheels para CPython 3.14. Sentence Transformers 6.0.1 declara Python 3.10 o posterior, pero sus clasificadores publicados enumeran hasta Python 3.13. Por prudencia, esta integración no declara Python 3.14 como combinación verificada de extremo a extremo; Python 3.12 o 3.13 es la recomendación para la función ML hasta verificar el conjunto completo. El entorno usado para las pruebas de esta iteración es Python 3.13.0.
@@ -63,6 +65,33 @@ python scripts\build_semantic_index.py `
 
 Volver a ejecutar el comando reemplaza de forma segura únicamente `semantic/`. Debe reconstruirse después de reingerir o editar `records.jsonl`, o al cambiar proveedor, modelo o estrategia.
 
+## Uso desde la interfaz
+
+En `/datasets/[id]`, la información del dataset y «Explorar registros» se mantienen.
+La sección «Búsqueda semántica» permite enviar una consulta con el botón
+«Buscar semánticamente» o con Enter. No se realizan búsquedas por cada tecla.
+La búsqueda textual encuentra coincidencias de palabras en texto y traducción;
+la semántica utiliza el índice del texto original y devuelve hasta 10 registros.
+
+Cada tarjeta conserva texto, traducción opcional, idioma, variedad, split,
+identificadores y fuente. «Similitud semántica» expresa el coseno como porcentaje,
+con hasta un decimal; puede ser negativo y no representa una probabilidad.
+La consulta enviada permanece identificada sobre sus resultados.
+
+La interfaz anuncia carga, errores y resultados vacíos. Explica cuándo falta
+la copia local procesada, el índice o el modelo, y cuándo el índice está
+desactualizado. No construye ni reconstruye índices automáticamente.
+Su funcionamiento requiere que el backend ya tenga un índice y proveedor compatibles.
+
+Las pruebas frontend usan respuestas sintéticas y renderizado React; no invocan
+el proveedor real ni descargan modelos.
+
+## Evaluación de modelos
+
+`scripts/evaluate_embedding_models.py` carga el benchmark sintético, genera rankings y calcula Precision@k, Recall@k y MRR. También informa tiempos orientativos de carga, embeddings y búsqueda. Solo una ejecución manual sin `--fake` puede cargar o descargar modelos reales; las pruebas usan `FakeEmbeddingProvider`.
+
+El benchmark versionado tiene 24 registros sintéticos y ocho consultas sobre agricultura, familia, educación, salud, naturaleza, comercio, viaje y comida. No contiene corpus reales ni ejemplos presentados como Quechua o Aymara. Consulta el informe para la metodología, resultados, limitaciones y comando reproducible.
+
 ## API
 
 ```http
@@ -79,4 +108,3 @@ Content-Type: application/json
 La respuesta contiene cada `CorpusRecord` completo y su `score` coseno, preservando `dataset_id`, `source_record_id` y procedencia. Los vectores de norma cero reciben score `0`. Se informan explícitamente dataset inexistente o no materializado, índice ausente o desactualizado, consulta vacía, límite inválido, índice incoherente y proveedor no disponible.
 
 Los índices, modelos y cachés no deben incorporarse a Git. El índice deriva del corpus y queda sujeto a sus condiciones de licencia y redistribución.
-

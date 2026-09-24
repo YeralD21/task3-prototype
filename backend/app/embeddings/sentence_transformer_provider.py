@@ -37,9 +37,13 @@ class SentenceTransformerProvider:
     def embed_text(self, text: str) -> np.ndarray:
         return self.embed_texts([text])[0]
 
+    def load(self) -> None:
+        """Carga explícitamente el modelo para medir o preparar su uso local."""
+
+        self._load_model()
+
     def embed_texts(self, texts: list[str]) -> np.ndarray:
         if not texts:
             return np.empty((0, 0), dtype=np.float32)
         vectors = self._load_model().encode(texts, convert_to_numpy=True)
         return np.asarray(vectors, dtype=np.float32)
-

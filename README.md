@@ -168,6 +168,14 @@ python scripts\build_semantic_index.py `
 
 El modelo se configura con `EMBEDDING_MODEL_NAME` o `--model`. Sentence Transformers puede descargarlo si no está en caché; las pruebas usan un proveedor fake sin red. El endpoint es `POST /api/v1/search/semantic`. Consulta [la guía de búsqueda semántica](docs/features/semantic-search.md) para el formato, fingerprint, reconstrucción, compatibilidad y limitaciones lingüísticas.
 
+Una [evaluación técnica reproducible](docs/evaluation/embedding-model-comparison.md) comparó tres modelos sobre 24 frases sintéticas. Recomienda provisionalmente `paraphrase-multilingual-MiniLM-L12-v2` por empatar en calidad con vectores más pequeños e inferencia rápida. El resultado no demuestra calidad para Quechua o Aymara y `EMBEDDING_MODEL_NAME` continúa configurable.
+
 ## Estado actual
 
-El Registry cataloga Common Voice Scripted Speech 26.0 para Puno Quechua (`qxp`) y AmericasNLP 2021 Aymara–Español (`aym`/`es`), aunque los corpus no estén descargados. El frontend permite consultar el catálogo, filtrar datasets y explorar registros locales mediante búsqueda textual y paginación. Los adaptadores y el pipeline procesan copias locales obtenidas manualmente; la API descubre sus registros e índices semánticos bajo `data/processed/`. La búsqueda semántica está disponible mediante API y todavía no tiene interfaz. No existen persistencia PostgreSQL, autenticación, reproducción de audio ni descarga automática.
+En el detalle de cada dataset, la sección «Búsqueda semántica» permite enviar
+consultas y comparar sus resultados con «Explorar registros» (búsqueda textual).
+Muestra hasta 10 registros con similitud semántica y trazabilidad. Requiere un
+índice local y un proveedor configurado; la interfaz explica si faltan o si el
+índice debe reconstruirse.
+
+El Registry cataloga Common Voice Scripted Speech 26.0 para Puno Quechua (`qxp`) y AmericasNLP 2021 Aymara–Español (`aym`/`es`), aunque los corpus no estén descargados. El frontend permite consultar el catálogo, filtrar datasets y explorar registros locales mediante búsqueda textual y paginación. Los adaptadores y el pipeline procesan copias locales obtenidas manualmente; la API descubre sus registros e índices semánticos bajo `data/processed/`. La búsqueda semántica está disponible mediante API y en la página de detalle. No existen persistencia PostgreSQL, autenticación, reproducción de audio ni descarga automática.

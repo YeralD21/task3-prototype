@@ -2,7 +2,7 @@
 
 ## Propósito
 
-Corpus Explorer permite leer registros de un dataset desde el navegador sin descargar archivos ni escribir código. La interfaz actual ofrece exploración textual tradicional y no modifica el corpus original. La búsqueda semántica existe como endpoint backend separado; su interfaz se implementará en una iteración posterior.
+Corpus Explorer permite leer registros de un dataset desde el navegador sin descargar archivos ni escribir código. «Explorar registros» ofrece búsqueda textual; la sección independiente «Búsqueda semántica» consulta el índice local mediante el endpoint semántico. Ambas conservan el corpus original.
 
 ## Flujo
 
@@ -30,4 +30,4 @@ Cada ficha conserva `dataset_id`, `source_record_id`, idioma, variedad, traducci
 
 ## Limitaciones y evolución
 
-La búsqueda de esta interfaz sigue siendo una coincidencia de subcadena en memoria. No incorpora ranking semántico, corrección ortográfica ni PostgreSQL. El motor semántico local y su endpoint conservan los mismos conceptos canónicos y trazabilidad, pero todavía no están conectados a la interfaz.
+La búsqueda textual sigue siendo una coincidencia de subcadena en memoria. La sección semántica muestra hasta 10 resultados ordenados por similitud, con los mismos registros y trazabilidad. Consulta [búsqueda semántica](semantic-search.md) para sus requisitos y limitaciones.
