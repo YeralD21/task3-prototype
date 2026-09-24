@@ -136,3 +136,89 @@ export interface AtlasResponse {
   sampling: AtlasSampling;
   items: AtlasPoint[];
 }
+
+export type PlaybookTaskId =
+  | "machine_translation"
+  | "automatic_speech_recognition"
+  | "semantic_search"
+  | "corpus_exploration"
+  | "language_modeling"
+  | "linguistic_research"
+  | "educational_use";
+
+export type PlaybookCompatibility = "compatible" | "potential" | "not_applicable" | "unknown";
+export type LocalArtifactStatus = "available" | "stale" | "missing" | "unknown";
+
+export interface PlaybookTaskAssessment {
+  task: PlaybookTaskId;
+  compatibility: PlaybookCompatibility;
+  reasons: string[];
+  limitations: string[];
+  license_notes: string[];
+  data_requirements: string[];
+  next_steps: string[];
+}
+
+export interface PlaybookLicense {
+  known: boolean;
+  name: string | null;
+  url: string | null;
+  commercial_use: boolean | null;
+  redistribution: boolean | null;
+  derivatives: boolean | null;
+  attribution_required: boolean | null;
+  notes: string | null;
+}
+
+export interface PlaybookVariety {
+  status: "specified" | "partial" | "unspecified";
+  varieties: LanguageVariety[];
+  note: string;
+}
+
+export interface PlaybookProvenance {
+  source_organization: string | null;
+  source_url: string | null;
+  documentation_url: string | null;
+  citation: string | null;
+  provenance: ProvenanceInfo;
+}
+
+export interface PlaybookLocalStatus {
+  available_locally: boolean | null;
+  semantic_index: LocalArtifactStatus;
+  atlas: LocalArtifactStatus;
+}
+
+export interface DatasetPlaybook {
+  dataset_id: string;
+  dataset_name: string;
+  languages: Language[];
+  variety: PlaybookVariety;
+  license: PlaybookLicense;
+  provenance: PlaybookProvenance;
+  local: PlaybookLocalStatus;
+  tasks: PlaybookTaskAssessment[];
+  disclaimer: string;
+}
+
+export interface PlaybookDatasetMatch {
+  dataset_id: string;
+  dataset_name: string;
+  compatibility: PlaybookCompatibility;
+  reasons: string[];
+  limitations: string[];
+  available_locally: boolean | null;
+  license_known: boolean;
+}
+
+export interface PlaybookDiscovery {
+  task: PlaybookTaskId;
+  data_requirements: string[];
+  ordering: "dataset_id";
+  compatible: PlaybookDatasetMatch[];
+  potential: PlaybookDatasetMatch[];
+  unknown: PlaybookDatasetMatch[];
+  not_applicable_count: number;
+  disclaimer: string;
+}

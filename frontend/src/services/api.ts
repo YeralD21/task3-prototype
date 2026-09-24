@@ -2,6 +2,9 @@ import type {
   AtlasResponse,
   CorpusRecordPage,
   Dataset,
+  DatasetPlaybook,
+  PlaybookDiscovery,
+  PlaybookTaskId,
   Filters,
   RecordFilters,
   SemanticSearchRequest,
@@ -121,4 +124,16 @@ export function atlasErrorMessage(error: unknown): string {
     }
   }
   return "No pudimos cargar el Atlas. Comprueba la conexión e inténtalo nuevamente.";
+}
+
+export const getDatasetPlaybook = (datasetId: string, signal?: AbortSignal) =>
+  request<DatasetPlaybook>(`/datasets/${encodeURIComponent(datasetId)}/playbook`, signal);
+
+export const getPlaybookDatasets = (task: PlaybookTaskId, signal?: AbortSignal) =>
+  request<PlaybookDiscovery>(`/playbook/datasets?${new URLSearchParams({ task })}`, signal);
+
+export function playbookErrorMessage(error: unknown): string {
+  if (error instanceof ApiError && error.status === 404)
+    return "Este dataset no figura en el catálogo, por lo que no hay un Playbook disponible.";
+  return "No pudimos cargar el Playbook. Comprueba la conexión e inténtalo nuevamente.";
 }

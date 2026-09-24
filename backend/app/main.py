@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes.atlas import router as atlas_router
 from app.api.routes.datasets import router as datasets_router
 from app.api.routes.health import router as health_router
+from app.api.routes.playbook import router as playbook_router
 from app.api.routes.search import router as search_router
 from app.config import get_settings
 
@@ -21,3 +22,4 @@ app.include_router(health_router, prefix="/api/v1")
 app.include_router(datasets_router, prefix="/api/v1")
 app.include_router(search_router, prefix="/api/v1")
 app.include_router(atlas_router, prefix="/api/v1")
+app.include_router(playbook_router, prefix="/api/v1")

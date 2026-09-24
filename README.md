@@ -6,7 +6,7 @@ Prototipo open source para abrir, explorar, comprender y reutilizar datasets lin
 
 Muchos corpus valiosos son difíciles de descubrir y requieren descargar archivos, comprender formatos heterogéneos y escribir scripts antes de saber qué contienen. El proyecto busca reducir esa barrera mediante una arquitectura centrada en datasets, con procedencia, licencia y variante lingüística explícitas.
 
-El prototipo incluye un modelo canónico, Dataset Registry y adaptadores locales para Common Voice y AmericasNLP. Atlas Vivo proyecta el corpus a 2D y lo muestra como un mapa interactivo. Corpus Radio y Playbook quedan para iteraciones posteriores.
+El prototipo incluye un modelo canónico, Dataset Registry y adaptadores locales para Common Voice y AmericasNLP. Atlas Vivo proyecta el corpus a 2D y lo muestra como un mapa interactivo. Dataset Playbook explica, con reglas transparentes, para qué tareas es técnicamente compatible cada dataset, separando esa compatibilidad de los permisos de uso. Corpus Radio queda para una iteración posterior.
 
 ## Arquitectura general
 
@@ -19,7 +19,7 @@ El prototipo incluye un modelo canónico, Dataset Registry y adaptadores locales
 - `docs/`: documentación de arquitectura.
 - `scripts/`: automatizaciones del proyecto.
 
-Consulta [la descripción de arquitectura](docs/architecture/overview.md), [el modelo canónico](docs/architecture/data-model.md), [el Dataset Registry](docs/architecture/dataset-registry.md) y [Corpus Explorer](docs/features/corpus-explorer.md) y [Atlas Vivo](docs/features/atlas-vivo.md).
+Consulta [la descripción de arquitectura](docs/architecture/overview.md), [el modelo canónico](docs/architecture/data-model.md), [el Dataset Registry](docs/architecture/dataset-registry.md), [Corpus Explorer](docs/features/corpus-explorer.md), [Atlas Vivo](docs/features/atlas-vivo.md) y [Dataset Playbook](docs/features/dataset-playbook.md).
 
 ## Tecnologías
 
@@ -184,6 +184,17 @@ El reductor predeterminado es PCA, implementado en NumPy, determinista y sin dep
 
 `GET /api/v1/datasets/{dataset_id}/atlas?limit=2000` devuelve las coordenadas y el `CorpusRecord` de cada punto, con un máximo de 5000 puntos y muestreo reproducible por encima del límite. En la web, la sección «Atlas Vivo» del detalle del dataset carga hasta 1000 puntos (250–2000 configurable) en un mapa SVG. Al pasar el cursor se ve un resumen, al hacer clic se selecciona el registro y el panel de detalle muestra su texto, traducción y procedencia. También se puede recorrer con teclado. La cercanía en 2D es una aproximación que pierde información: no equivale a la similitud semántica. Consulta [la guía de Atlas Vivo](docs/features/atlas-vivo.md).
 
+## Dataset Playbook
+
+El Playbook responde «¿para qué puedo utilizar este dataset?» con reglas deterministas sobre la metadata registrada. No usa LLM, embeddings, modelos, puntuaciones ni rankings. Evalúa siete tareas: traducción automática, ASR, búsqueda semántica, exploración del corpus, modelado del lenguaje, investigación lingüística y uso educativo. Cada una recibe un estado (Compatible, Potencial, No aplicable o Desconocido) con razones, limitaciones, notas de licencia y pasos siguientes.
+
+La **compatibilidad técnica se separa del permiso de uso**. Los permisos `null` se muestran como «No determinado» y nunca se convierten en sí o no. El Playbook no afirma autorización para entrenar ni para uso educativo, conserva la procedencia y advierte cuando una variedad no debe generalizarse. No es asesoría legal.
+
+- `GET /api/v1/datasets/{dataset_id}/playbook`: evaluación de un dataset; en la web, sección «Playbook» del detalle.
+- `GET /api/v1/playbook/datasets?task=machine_translation`: datasets agrupados por compatibilidad, en orden alfabético por id, sin ranking.
+
+Consulta [la guía del Playbook](docs/features/dataset-playbook.md).
+
 ## Estado actual
 
 En el detalle de cada dataset, la sección «Búsqueda semántica» permite enviar
@@ -192,4 +203,4 @@ Muestra hasta 10 registros con similitud semántica y trazabilidad. Requiere un
 índice local y un proveedor configurado; la interfaz explica si faltan o si el
 índice debe reconstruirse.
 
-El Registry cataloga Common Voice Scripted Speech 26.0 para Puno Quechua (`qxp`) y AmericasNLP 2021 Aymara–Español (`aym`/`es`), aunque los corpus no estén descargados. El frontend permite consultar el catálogo, filtrar datasets y explorar registros locales mediante búsqueda textual y paginación. Los adaptadores y el pipeline procesan copias locales obtenidas manualmente; la API descubre sus registros e índices semánticos bajo `data/processed/`. La búsqueda semántica está disponible mediante API y en la página de detalle. Atlas Vivo expone coordenadas 2D (PCA, o UMAP opcional) mediante `GET /api/v1/datasets/{dataset_id}/atlas` y se explora en la página de detalle con hover y selección; todavía no tiene clustering, zoom ni colores por tema. No existen persistencia PostgreSQL, autenticación, reproducción de audio ni descarga automática.
+El Registry cataloga Common Voice Scripted Speech 26.0 para Puno Quechua (`qxp`) y AmericasNLP 2021 Aymara–Español (`aym`/`es`), aunque los corpus no estén descargados. El frontend permite consultar el catálogo, filtrar datasets y explorar registros locales mediante búsqueda textual y paginación. Los adaptadores y el pipeline procesan copias locales obtenidas manualmente; la API descubre sus registros e índices semánticos bajo `data/processed/`. La búsqueda semántica está disponible mediante API y en la página de detalle. Atlas Vivo expone coordenadas 2D (PCA, o UMAP opcional) mediante `GET /api/v1/datasets/{dataset_id}/atlas` y se explora en la página de detalle con hover y selección; todavía no tiene clustering, zoom ni colores por tema. El Dataset Playbook evalúa cada dataset por tarea en la página de detalle y ofrece descubrimiento por tarea mediante API; el filtro «Uso previsto» del catálogo aún no usa el Playbook. No existen persistencia PostgreSQL, autenticación, reproducción de audio ni descarga automática.
