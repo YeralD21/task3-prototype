@@ -34,6 +34,7 @@ class LocalSemanticIndex:
     embeddings: np.ndarray
     record_ids: tuple[str, ...]
     manifest: dict[str, Any]
+    source_record_ids: tuple[str, ...] = ()
 
 
 def records_fingerprint(records_path: Path) -> str:
@@ -43,6 +44,22 @@ def records_fingerprint(records_path: Path) -> str:
     with records_path.open("rb") as file:
         for chunk in iter(lambda: file.read(1024 * 1024), b""):
             digest.update(chunk)
+    return digest.hexdigest()
+
+
+SEMANTIC_INDEX_FINGERPRINT_FILES = ("embeddings.npy", "records.jsonl")
+
+
+def semantic_index_fingerprint(semantic_directory: Path) -> str:
+    """SHA-256 de la matriz y del mapeo de filas; cambia si cambia un embedding o su orden."""
+
+    digest = hashlib.sha256()
+    for name in SEMANTIC_INDEX_FINGERPRINT_FILES:
+        path = Path(semantic_directory) / name
+        digest.update(f"{name}\n{path.stat().st_size}\n".encode("utf-8"))
+        with path.open("rb") as file:
+            for chunk in iter(lambda: file.read(1024 * 1024), b""):
+                digest.update(chunk)
     return digest.hexdigest()
 
 
@@ -68,6 +85,7 @@ class LocalSemanticIndexRepository:
             embeddings = np.load(embeddings_path, allow_pickle=False)
             mappings = [json.loads(line) for line in mapping_path.read_text(encoding="utf-8").splitlines()]
             record_ids = tuple(item["record_id"] for item in mappings)
+            source_record_ids = tuple(item["source_record_id"] for item in mappings)
         except (OSError, EOFError, UnicodeError, json.JSONDecodeError, KeyError, ValueError) as error:
             raise InvalidSemanticIndexError(
                 f"Semantic index for dataset '{dataset_id}' is invalid."
@@ -90,4 +108,4 @@ class LocalSemanticIndexRepository:
             raise InvalidSemanticIndexError(
                 f"Semantic index for dataset '{dataset_id}' has inconsistent metadata."
             )
-        return LocalSemanticIndex(embeddings, record_ids, manifest)
+        return LocalSemanticIndex(embeddings, record_ids, manifest, source_record_ids)

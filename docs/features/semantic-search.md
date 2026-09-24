@@ -107,4 +107,6 @@ Content-Type: application/json
 
 La respuesta contiene cada `CorpusRecord` completo y su `score` coseno, preservando `dataset_id`, `source_record_id` y procedencia. Los vectores de norma cero reciben score `0`. Se informan explícitamente dataset inexistente o no materializado, índice ausente o desactualizado, consulta vacía, límite inválido, índice incoherente y proveedor no disponible.
 
+[Atlas Vivo](atlas-vivo.md) reutiliza `embeddings.npy` para proyectar el corpus a 2D sin recalcular embeddings y se invalida cuando este índice cambia.
+
 Los índices, modelos y cachés no deben incorporarse a Git. El índice deriva del corpus y queda sujeto a sus condiciones de licencia y redistribución.

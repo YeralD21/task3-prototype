@@ -6,7 +6,7 @@ Prototipo open source para abrir, explorar, comprender y reutilizar datasets lin
 
 Muchos corpus valiosos son difíciles de descubrir y requieren descargar archivos, comprender formatos heterogéneos y escribir scripts antes de saber qué contienen. El proyecto busca reducir esa barrera mediante una arquitectura centrada en datasets, con procedencia, licencia y variante lingüística explícitas.
 
-El prototipo incluye un modelo canónico, Dataset Registry y adaptadores locales para Common Voice y AmericasNLP. Atlas Vivo, Corpus Radio y Playbook quedan para iteraciones posteriores.
+El prototipo incluye un modelo canónico, Dataset Registry y adaptadores locales para Common Voice y AmericasNLP. Atlas Vivo cuenta con infraestructura backend/ML (proyección 2D y API); su visualización, Corpus Radio y Playbook quedan para iteraciones posteriores.
 
 ## Arquitectura general
 
@@ -19,7 +19,7 @@ El prototipo incluye un modelo canónico, Dataset Registry y adaptadores locales
 - `docs/`: documentación de arquitectura.
 - `scripts/`: automatizaciones del proyecto.
 
-Consulta [la descripción de arquitectura](docs/architecture/overview.md), [el modelo canónico](docs/architecture/data-model.md), [el Dataset Registry](docs/architecture/dataset-registry.md) y [Corpus Explorer](docs/features/corpus-explorer.md).
+Consulta [la descripción de arquitectura](docs/architecture/overview.md), [el modelo canónico](docs/architecture/data-model.md), [el Dataset Registry](docs/architecture/dataset-registry.md) y [Corpus Explorer](docs/features/corpus-explorer.md) y [Atlas Vivo](docs/features/atlas-vivo.md).
 
 ## Tecnologías
 
@@ -170,6 +170,20 @@ El modelo se configura con `EMBEDDING_MODEL_NAME` o `--model`. Sentence Transfor
 
 Una [evaluación técnica reproducible](docs/evaluation/embedding-model-comparison.md) comparó tres modelos sobre 24 frases sintéticas. Recomienda provisionalmente `paraphrase-multilingual-MiniLM-L12-v2` por empatar en calidad con vectores más pequeños e inferencia rápida. El resultado no demuestra calidad para Quechua o Aymara y `EMBEDDING_MODEL_NAME` continúa configurable.
 
+## Construir el Atlas Vivo
+
+El Atlas proyecta los embeddings ya calculados a coordenadas `(x, y)`. No recalcula embeddings ni carga modelos. Después de construir el índice semántico:
+
+```powershell
+python scripts\build_atlas.py `
+  --dataset americasnlp-2021-aymara-spanish `
+  --processed-root data\processed
+```
+
+El reductor predeterminado es PCA, implementado en NumPy, determinista y sin dependencias nuevas. UMAP es opcional (`--reducer umap`, con `random_state` explícito) y requiere `backend\requirements-umap.txt`, que no forma parte del backend base. El resultado se publica en `data/processed/<dataset_id>/atlas/` (`coordinates.jsonl` y `atlas-manifest.json`) con las huellas SHA-256 de los registros y del índice semántico. Si cualquiera de ellos cambia, la API rechaza el Atlas como desactualizado.
+
+`GET /api/v1/datasets/{dataset_id}/atlas?limit=2000` devuelve las coordenadas, con un máximo de 5000 puntos y muestreo reproducible por encima del límite. La cercanía en 2D es una aproximación que pierde información: no equivale a la similitud semántica. Consulta [la guía de Atlas Vivo](docs/features/atlas-vivo.md).
+
 ## Estado actual
 
 En el detalle de cada dataset, la sección «Búsqueda semántica» permite enviar
@@ -178,4 +192,4 @@ Muestra hasta 10 registros con similitud semántica y trazabilidad. Requiere un
 índice local y un proveedor configurado; la interfaz explica si faltan o si el
 índice debe reconstruirse.
 
-El Registry cataloga Common Voice Scripted Speech 26.0 para Puno Quechua (`qxp`) y AmericasNLP 2021 Aymara–Español (`aym`/`es`), aunque los corpus no estén descargados. El frontend permite consultar el catálogo, filtrar datasets y explorar registros locales mediante búsqueda textual y paginación. Los adaptadores y el pipeline procesan copias locales obtenidas manualmente; la API descubre sus registros e índices semánticos bajo `data/processed/`. La búsqueda semántica está disponible mediante API y en la página de detalle. No existen persistencia PostgreSQL, autenticación, reproducción de audio ni descarga automática.
+El Registry cataloga Common Voice Scripted Speech 26.0 para Puno Quechua (`qxp`) y AmericasNLP 2021 Aymara–Español (`aym`/`es`), aunque los corpus no estén descargados. El frontend permite consultar el catálogo, filtrar datasets y explorar registros locales mediante búsqueda textual y paginación. Los adaptadores y el pipeline procesan copias locales obtenidas manualmente; la API descubre sus registros e índices semánticos bajo `data/processed/`. La búsqueda semántica está disponible mediante API y en la página de detalle. Atlas Vivo expone coordenadas 2D (PCA, o UMAP opcional) mediante `GET /api/v1/datasets/{dataset_id}/atlas`; todavía no tiene visualización en el frontend ni clustering. No existen persistencia PostgreSQL, autenticación, reproducción de audio ni descarga automática.
