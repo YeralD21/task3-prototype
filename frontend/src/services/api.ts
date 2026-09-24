@@ -1,4 +1,5 @@
 import type {
+  AtlasResponse,
   CorpusRecordPage,
   Dataset,
   Filters,
@@ -86,4 +87,38 @@ export function semanticErrorMessage(error: unknown): string {
     }
   }
   return "No pudimos realizar la búsqueda semántica. Comprueba la conexión e inténtalo nuevamente.";
+}
+
+export const ATLAS_LIMITS = [250, 500, 1000, 2000] as const;
+export const ATLAS_DEFAULT_LIMIT = 1000;
+
+export function buildAtlasPath(datasetId: string, limit: number): string {
+  const params = new URLSearchParams({ limit: String(limit) });
+  return `/datasets/${encodeURIComponent(datasetId)}/atlas?${params}`;
+}
+
+export const getDatasetAtlas = (
+  datasetId: string,
+  limit: number = ATLAS_DEFAULT_LIMIT,
+  signal?: AbortSignal,
+) => request<AtlasResponse>(buildAtlasPath(datasetId, limit), signal);
+
+export const ATLAS_NOT_LOCAL =
+  "Para ver el Atlas Vivo, primero debe existir una copia local procesada del dataset.";
+export const ATLAS_MISSING = "Este dataset todavía no tiene un Atlas construido.";
+export const ATLAS_STALE = "El Atlas está desactualizado y debe reconstruirse.";
+export const ATLAS_NO_INDEX =
+  "Este dataset todavía no tiene un índice semántico. Es necesario construirlo antes que el Atlas.";
+
+export function atlasErrorMessage(error: unknown): string {
+  if (error instanceof ApiError) {
+    if (error.status === 404) return "Este dataset ya no está disponible en el catálogo.";
+    if (error.status === 409) {
+      if (error.detail.includes("not available locally")) return ATLAS_NOT_LOCAL;
+      if (error.detail.startsWith("Semantic index")) return ATLAS_NO_INDEX;
+      if (error.detail.includes("is stale")) return ATLAS_STALE;
+      if (error.detail.includes("was not found")) return ATLAS_MISSING;
+    }
+  }
+  return "No pudimos cargar el Atlas. Comprueba la conexión e inténtalo nuevamente.";
 }

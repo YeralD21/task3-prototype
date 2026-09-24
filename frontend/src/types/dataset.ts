@@ -105,3 +105,34 @@ export interface SemanticSearchResponse {
   dataset_id: string;
   items: SemanticSearchItem[];
 }
+
+export type AtlasReducer = "pca" | "umap" | (string & {});
+
+export interface AtlasPoint {
+  record_id: string;
+  dataset_id: string;
+  source_record_id: string;
+  x: number;
+  y: number;
+  record: CorpusRecord;
+}
+
+export interface AtlasSampling {
+  applied: boolean;
+  method: "none" | "sha256_record_id";
+}
+
+export interface AtlasResponse {
+  dataset_id: string;
+  reducer: AtlasReducer;
+  created_at: string;
+  source_embedding_model: string;
+  source_embedding_dimension: number;
+  parameters: Record<string, unknown>;
+  diagnostics: Record<string, unknown>;
+  total_records: number;
+  returned_records: number;
+  limit: number;
+  sampling: AtlasSampling;
+  items: AtlasPoint[];
+}

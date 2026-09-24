@@ -5,6 +5,7 @@ import { ApiError, getDataset } from "@/services/api";
 import DatasetMetadata from "@/components/DatasetMetadata";
 import CorpusExplorer from "@/components/CorpusExplorer";
 import SemanticSearch from "@/components/SemanticSearch";
+import AtlasExplorer from "@/components/AtlasExplorer";
 import type { Dataset } from "@/types/dataset";
 export default function Detail({
   params,
@@ -64,6 +65,7 @@ export default function Detail({
           <DatasetMetadata dataset={dataset} />
           <CorpusExplorer dataset={dataset} />
           <SemanticSearch key={dataset.id} dataset={dataset} />
+          <AtlasExplorer key={`atlas-${dataset.id}`} dataset={dataset} />
         </>
       )}
     </div>

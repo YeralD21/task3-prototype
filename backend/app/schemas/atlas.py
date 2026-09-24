@@ -4,6 +4,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.schemas.canonical import CorpusRecord
+
 
 class AtlasPoint(BaseModel):
     """Una fila de coordinates.jsonl; conserva la trazabilidad del registro."""
@@ -15,6 +17,12 @@ class AtlasPoint(BaseModel):
     source_record_id: str = Field(min_length=1)
     x: float = Field(allow_inf_nan=False)
     y: float = Field(allow_inf_nan=False)
+
+
+class AtlasResponseItem(AtlasPoint):
+    """Punto del Atlas con el CorpusRecord completo para mostrarlo sin otra consulta."""
+
+    record: CorpusRecord
 
 
 class AtlasSampling(BaseModel):
@@ -34,4 +42,4 @@ class AtlasResponse(BaseModel):
     returned_records: int
     limit: int
     sampling: AtlasSampling
-    items: list[AtlasPoint]
+    items: list[AtlasResponseItem]

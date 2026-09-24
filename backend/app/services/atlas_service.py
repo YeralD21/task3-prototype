@@ -4,9 +4,14 @@ import hashlib
 from collections.abc import Sequence
 from dataclasses import dataclass
 
-from app.repositories.atlas_repository import LocalAtlas, LocalAtlasRepository
+from app.repositories.atlas_repository import (
+    InvalidAtlasError,
+    LocalAtlas,
+    LocalAtlasRepository,
+)
 from app.repositories.dataset_repository import DatasetRepository
 from app.schemas.atlas import AtlasPoint
+from app.schemas.canonical import CorpusRecord
 from app.services.semantic_search_service import DatasetNotAvailableLocallyError
 
 ATLAS_DEFAULT_LIMIT = 2000
@@ -18,6 +23,7 @@ SAMPLING_METHOD = "sha256_record_id"
 class AtlasView:
     atlas: LocalAtlas
     points: list[AtlasPoint]
+    records: list[CorpusRecord]
     sampled: bool
 
 
@@ -54,4 +60,15 @@ class AtlasService:
             )
         atlas = self.atlas_repository.load(dataset_id)
         points = sample_points(atlas.points, limit)
-        return AtlasView(atlas, points, sampled=len(points) < len(atlas.points))
+        records_by_id = {
+            record.id: record for record in self.dataset_repository.list_records(dataset_id)
+        }
+        records = [records_by_id.get(point.record_id) for point in points]
+        if any(
+            record is None or record.source_record_id != point.source_record_id
+            for point, record in zip(points, records)
+        ):
+            raise InvalidAtlasError(
+                f"Atlas for dataset '{dataset_id}' references unavailable records."
+            )
+        return AtlasView(atlas, points, records, sampled=len(points) < len(atlas.points))

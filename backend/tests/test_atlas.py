@@ -369,7 +369,31 @@ def test_endpoint_returns_full_atlas(atlas_root: Path, client_for) -> None:
     assert payload["sampling"] == {"applied": False, "method": "none"}
     assert payload["source_embedding_dimension"] == 16
     assert payload["items"][0]["source_record_id"] == "synthetic-source-record-001"
-    assert payload["items"] == read_coordinates(atlas_root)
+    assert [
+        {key: value for key, value in item.items() if key != "record"}
+        for item in payload["items"]
+    ] == read_coordinates(atlas_root)
+    first_record = payload["items"][0]["record"]
+    assert first_record["id"] == "synthetic-record-001"
+    assert first_record["source_record_id"] == "synthetic-source-record-001"
+    assert first_record["text"] == "synthetic topic 1 sentence 001"
+    assert first_record["provenance"]["source_name"]
+
+
+def test_endpoint_reports_points_without_records(
+    atlas_root: Path, client_for, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    service = atlas_service(atlas_root)
+    all_records = service.dataset_repository.list_records(SAMPLE_DATASET_ID)
+    monkeypatch.setattr(
+        service.dataset_repository, "list_records", lambda dataset_id: all_records[1:]
+    )
+    with client_for(service) as client:
+        response = client.get(f"/api/v1/datasets/{SAMPLE_DATASET_ID}/atlas")
+    assert response.status_code == 500
+    assert response.json() == {
+        "detail": f"Atlas for dataset '{SAMPLE_DATASET_ID}' references unavailable records."
+    }
 
 
 def test_endpoint_samples_reproducibly_above_limit(atlas_root: Path, client_for) -> None:

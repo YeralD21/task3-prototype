@@ -1,6 +1,6 @@
-# Atlas Vivo (backend/ML)
+# Atlas Vivo
 
-Atlas Vivo proyecta cada registro de un dataset a un punto `(x, y)` para que, más adelante, una interfaz pueda mostrar el corpus como un mapa. Esta iteración implementa únicamente la infraestructura: reducción dimensional, artefactos locales, detección de desactualización y API. Todavía no hay visualización, clustering ni base de datos.
+Atlas Vivo proyecta cada registro de un dataset a un punto `(x, y)` y lo muestra como un mapa interactivo en el detalle del dataset. Incluye reducción dimensional, artefactos locales, detección de desactualización, API y una primera visualización SVG con hover y selección. Todavía no hay clustering ni base de datos.
 
 ## La cercanía en 2D es una aproximación
 
@@ -158,9 +158,14 @@ Respuesta:
   "returned_records": 12,
   "limit": 12,
   "sampling": {"applied": true, "method": "sha256_record_id"},
-  "items": [{"record_id": "...", "dataset_id": "...", "source_record_id": "...", "x": 0.71, "y": 63.31}]
+  "items": [{
+    "record_id": "...", "dataset_id": "...", "source_record_id": "...", "x": 0.71, "y": 63.31,
+    "record": {"id": "...", "text": "...", "translation": null, "language": {"...": "..."}, "provenance": {"...": "..."}}
+  }]
 }
 ```
+
+Cada elemento de `items` incluye el `CorpusRecord` completo en `record`, para que la interfaz muestre texto, traducción y procedencia sin otra petición. Los artefactos en disco no cambian: `coordinates.jsonl` sigue sin duplicar textos. El servicio une los puntos muestreados con los registros canónicos y comprueba que `source_record_id` coincida. Si un punto referencia un registro inexistente, responde `500` con un mensaje genérico.
 
 | Situación | Código |
 |---|---|
@@ -174,10 +179,74 @@ Respuesta:
 
 Las respuestas de error contienen solo un `detail` legible, sin rutas locales ni stack traces.
 
+## Uso desde el frontend
+
+En `/datasets/[id]`, después de «Búsqueda semántica», está la sección **Atlas Vivo** (ancla `#atlas`). Las secciones existentes no cambian.
+
+1. La sección explica qué representa el mapa y sus límites. Si el dataset no tiene copia local, muestra el aviso y no hace ninguna petición.
+2. «Puntos a solicitar» ofrece 250, 500, 1000 (predeterminado) y 2000. La interfaz nunca pide 5000.
+3. «Abrir Atlas Vivo» carga el Atlas solo cuando la persona lo pide. Así, visitar el detalle no descarga cientos de registros. Cambiar el límite después vuelve a consultar.
+4. Sobre el mapa se muestra el reductor (PCA/UMAP), «N de M puntos visibles», si se aplicó la muestra reproducible y, solo con PCA, la varianza conservada por los dos ejes.
+
+### Interacción
+
+- **Hover:** el punto crece y recibe un contorno. Un tooltip breve muestra el texto (hasta 120 caracteres), la traducción si existe (hasta 100), el idioma y el `source_record_id`.
+- **Clic:** selecciona el punto. Se marca en naranja, con mayor tamaño, contorno grueso y un anillo discontinuo, así que no depende solo del color. El panel «Registro seleccionado» muestra el texto completo, la traducción, el idioma, la variedad, el split, `source_record_id`, `dataset_id`, el audio disponible, la procedencia completa (organización, dataset original, cita, fecha, notas, URL) y las coordenadas originales.
+- **Teclado:** el mapa es un solo elemento enfocable, con el foco visible en naranja. Las flechas recorren los puntos de izquierda a derecha, `Inicio`/`Fin` saltan al primero y al último, y `Escape` limpia la selección. Los puntos no son elementos de tabulación individuales, para no crear cientos de paradas de foco.
+- **Botones:** «Punto anterior» y «Punto siguiente» recorren el mismo orden sin necesidad de ratón.
+- El SVG tiene `<title>` y `<desc>`. El registro seleccionado se anuncia fuera del SVG, en una región `aria-live`, junto con su posición («Punto 29 de 60»).
+- **Diseño:** en escritorio, el mapa y el panel quedan lado a lado. Por debajo de 900 px, el mapa queda arriba y el detalle debajo, sin scroll horizontal.
+
+### Estados
+
+| Situación | Mensaje |
+|---|---|
+| Cargando | «Cargando el Atlas…» (`aria-busy`) |
+| Sin copia local | «Para ver el Atlas Vivo, primero debe existir una copia local procesada del dataset.» |
+| Atlas no construido | «Este dataset todavía no tiene un Atlas construido.» |
+| Atlas desactualizado | «El Atlas está desactualizado y debe reconstruirse.» |
+| Sin índice semántico | «Este dataset todavía no tiene un índice semántico. Es necesario construirlo antes que el Atlas.» |
+| Respuesta vacía | «El Atlas no contiene puntos para mostrar.» |
+| Otro error | Mensaje genérico con botón «Reintentar» |
+
+Nunca se muestran el `detail` crudo de la API ni stack traces.
+
+### Escalado
+
+`scaleAtlasPoints` (`frontend/src/services/atlas.ts`) convierte las coordenadas del Atlas a un `viewBox` de 800×520 con 32 px de padding, sin modificar los datos:
+
+- usa **la misma escala en ambos ejes** para no deformar la proyección. Por eso, una nube alargada no ocupa todo el alto;
+- centra la nube; un eje constante queda en el centro; un solo punto queda en el centro del mapa;
+- admite coordenadas negativas y cualquier rango;
+- invierte el eje vertical para que `y` crezca hacia arriba.
+
+### Limitaciones visuales
+
+- Los puntos cercanos pueden **solaparse**. El hover y el clic corresponden al punto visible encima. Para llegar a todos, usa las flechas o los botones anterior/siguiente.
+- No hay zoom, desplazamiento, búsqueda dentro del mapa, filtros ni colores por tema o categoría. Todos los puntos usan el mismo color.
+- Con escala uniforme, si un eje tiene mucho más rango que el otro, la nube se ve aplanada. Es intencional: refleja la proyección real.
+- El SVG está pensado para los límites que ofrece la interfaz (hasta 2000 puntos).
+- El tooltip requiere un puntero. En pantallas táctiles, el toque selecciona y el detalle aparece debajo del mapa.
+
+### Componentes
+
+| Archivo | Responsabilidad |
+|---|---|
+| `components/AtlasExplorer.tsx` | Sección, explicación, límite, petición y estado de selección |
+| `components/AtlasView.tsx` | Estados, metadata y teclado; compone mapa y detalle |
+| `components/AtlasPlot.tsx` | SVG, puntos (normal/hover/seleccionado) y tooltip; sin estado propio |
+| `components/AtlasPointDetails.tsx` | Panel del registro; reutiliza `CorpusRecordCard` y añade procedencia y coordenadas |
+| `services/atlas.ts` | Escalado, orden de lectura, navegación y formato |
+| `services/api.ts` | `getDatasetAtlas(datasetId, limit)` y traducción de errores |
+
+Sin dependencias nuevas: SVG nativo de React, sin D3, Plotly ni WebGL.
+
 ## Pruebas
 
-`backend/tests/test_atlas.py` (41 pruebas) usa embeddings sintéticos y `FakeEmbeddingProvider`, con la red bloqueada. Cubre: forma N×2, determinismo, invariancia de signo, recuperación de la dirección dominante, rango bajo, entradas inválidas, UMAP ausente, `random_state` explícito en UMAP (con un módulo simulado), artefactos, manifest, fingerprints, inmutabilidad de `embeddings.npy` y `records.jsonl`, reconstrucción determinista, índice semántico inexistente o desactualizado, Atlas desactualizado por registros o embeddings, artefactos corruptos, muestreo, CLI y todos los códigos del endpoint. No descargan ni cargan modelos.
+`frontend/tests/atlas.test.ts` (21 pruebas, sin red ni modelos) cubre: petición (URL, id codificado, límite, señal), escalado (rango normal, negativos, x/y constantes, un punto, proporciones, sin mutar la entrada), carga, puntos renderizados, SVG accesible, metadata, respuesta vacía, clic y hover (invocando los handlers de los puntos), marcado del seleccionado, detalle completo, traducción opcional en tooltip y panel, navegación por teclado, Atlas inexistente o desactualizado, índice ausente, dataset no local, error genérico y ausencia de `any`.
+
+`backend/tests/test_atlas.py` (42 pruebas) usa embeddings sintéticos y `FakeEmbeddingProvider`, con la red bloqueada. Cubre: forma N×2, determinismo, invariancia de signo, recuperación de la dirección dominante, rango bajo, entradas inválidas, UMAP ausente, `random_state` explícito en UMAP (con un módulo simulado), artefactos, manifest, fingerprints, inmutabilidad de `embeddings.npy` y `records.jsonl`, reconstrucción determinista, índice semántico inexistente o desactualizado, Atlas desactualizado por registros o embeddings, artefactos corruptos, muestreo, CLI y todos los códigos del endpoint. No descargan ni cargan modelos.
 
 ## Fuera de alcance
 
-Visualización frontend, clustering, D3/Plotly/WebGL, PostgreSQL/pgvector, Corpus Radio y entrenamiento o fine-tuning.
+Clustering, colores por tema, clasificación automática, búsqueda o filtros dentro del Atlas, zoom, D3/Plotly/WebGL, PostgreSQL/pgvector, Corpus Radio y entrenamiento o fine-tuning.

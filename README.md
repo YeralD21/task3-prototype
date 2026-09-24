@@ -6,7 +6,7 @@ Prototipo open source para abrir, explorar, comprender y reutilizar datasets lin
 
 Muchos corpus valiosos son difíciles de descubrir y requieren descargar archivos, comprender formatos heterogéneos y escribir scripts antes de saber qué contienen. El proyecto busca reducir esa barrera mediante una arquitectura centrada en datasets, con procedencia, licencia y variante lingüística explícitas.
 
-El prototipo incluye un modelo canónico, Dataset Registry y adaptadores locales para Common Voice y AmericasNLP. Atlas Vivo cuenta con infraestructura backend/ML (proyección 2D y API); su visualización, Corpus Radio y Playbook quedan para iteraciones posteriores.
+El prototipo incluye un modelo canónico, Dataset Registry y adaptadores locales para Common Voice y AmericasNLP. Atlas Vivo proyecta el corpus a 2D y lo muestra como un mapa interactivo. Corpus Radio y Playbook quedan para iteraciones posteriores.
 
 ## Arquitectura general
 
@@ -182,7 +182,7 @@ python scripts\build_atlas.py `
 
 El reductor predeterminado es PCA, implementado en NumPy, determinista y sin dependencias nuevas. UMAP es opcional (`--reducer umap`, con `random_state` explícito) y requiere `backend\requirements-umap.txt`, que no forma parte del backend base. El resultado se publica en `data/processed/<dataset_id>/atlas/` (`coordinates.jsonl` y `atlas-manifest.json`) con las huellas SHA-256 de los registros y del índice semántico. Si cualquiera de ellos cambia, la API rechaza el Atlas como desactualizado.
 
-`GET /api/v1/datasets/{dataset_id}/atlas?limit=2000` devuelve las coordenadas, con un máximo de 5000 puntos y muestreo reproducible por encima del límite. La cercanía en 2D es una aproximación que pierde información: no equivale a la similitud semántica. Consulta [la guía de Atlas Vivo](docs/features/atlas-vivo.md).
+`GET /api/v1/datasets/{dataset_id}/atlas?limit=2000` devuelve las coordenadas y el `CorpusRecord` de cada punto, con un máximo de 5000 puntos y muestreo reproducible por encima del límite. En la web, la sección «Atlas Vivo» del detalle del dataset carga hasta 1000 puntos (250–2000 configurable) en un mapa SVG. Al pasar el cursor se ve un resumen, al hacer clic se selecciona el registro y el panel de detalle muestra su texto, traducción y procedencia. También se puede recorrer con teclado. La cercanía en 2D es una aproximación que pierde información: no equivale a la similitud semántica. Consulta [la guía de Atlas Vivo](docs/features/atlas-vivo.md).
 
 ## Estado actual
 
@@ -192,4 +192,4 @@ Muestra hasta 10 registros con similitud semántica y trazabilidad. Requiere un
 índice local y un proveedor configurado; la interfaz explica si faltan o si el
 índice debe reconstruirse.
 
-El Registry cataloga Common Voice Scripted Speech 26.0 para Puno Quechua (`qxp`) y AmericasNLP 2021 Aymara–Español (`aym`/`es`), aunque los corpus no estén descargados. El frontend permite consultar el catálogo, filtrar datasets y explorar registros locales mediante búsqueda textual y paginación. Los adaptadores y el pipeline procesan copias locales obtenidas manualmente; la API descubre sus registros e índices semánticos bajo `data/processed/`. La búsqueda semántica está disponible mediante API y en la página de detalle. Atlas Vivo expone coordenadas 2D (PCA, o UMAP opcional) mediante `GET /api/v1/datasets/{dataset_id}/atlas`; todavía no tiene visualización en el frontend ni clustering. No existen persistencia PostgreSQL, autenticación, reproducción de audio ni descarga automática.
+El Registry cataloga Common Voice Scripted Speech 26.0 para Puno Quechua (`qxp`) y AmericasNLP 2021 Aymara–Español (`aym`/`es`), aunque los corpus no estén descargados. El frontend permite consultar el catálogo, filtrar datasets y explorar registros locales mediante búsqueda textual y paginación. Los adaptadores y el pipeline procesan copias locales obtenidas manualmente; la API descubre sus registros e índices semánticos bajo `data/processed/`. La búsqueda semántica está disponible mediante API y en la página de detalle. Atlas Vivo expone coordenadas 2D (PCA, o UMAP opcional) mediante `GET /api/v1/datasets/{dataset_id}/atlas` y se explora en la página de detalle con hover y selección; todavía no tiene clustering, zoom ni colores por tema. No existen persistencia PostgreSQL, autenticación, reproducción de audio ni descarga automática.

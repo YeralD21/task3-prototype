@@ -17,7 +17,7 @@ from app.repositories.dataset_repository import (
     LocalDatasetRepository,
 )
 from app.repositories.semantic_index_repository import SemanticIndexNotFoundError
-from app.schemas.atlas import AtlasResponse, AtlasSampling
+from app.schemas.atlas import AtlasResponse, AtlasResponseItem, AtlasSampling
 from app.services.atlas_service import (
     ATLAS_DEFAULT_LIMIT,
     ATLAS_MAX_LIMIT,
@@ -84,5 +84,8 @@ def get_dataset_atlas(
         sampling=AtlasSampling(
             applied=view.sampled, method=SAMPLING_METHOD if view.sampled else "none"
         ),
-        items=view.points,
+        items=[
+            AtlasResponseItem(**point.model_dump(), record=record)
+            for point, record in zip(view.points, view.records)
+        ],
     )
