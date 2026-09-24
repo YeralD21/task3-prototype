@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     dataset_registry_path: Path = PROJECT_ROOT / "data" / "samples"
     dataset_catalog_path: Path = PROJECT_ROOT / "datasets" / "registry"
     dataset_processed_path: Path = PROJECT_ROOT / "data" / "processed"
+    # Única raíz desde la que Corpus Radio puede leer audio original.
+    dataset_raw_path: Path = PROJECT_ROOT / "data" / "raw"
     embedding_model_name: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")

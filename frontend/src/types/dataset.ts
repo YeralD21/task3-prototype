@@ -71,7 +71,6 @@ export interface CorpusRecord {
   translation: string | null;
   translation_language: Language | null;
   audio_id: string | null;
-  speaker_id: string | null;
   metadata: Record<string, unknown> | null;
 }
 
@@ -221,4 +220,23 @@ export interface PlaybookDiscovery {
   unknown: PlaybookDatasetMatch[];
   not_applicable_count: number;
   disclaimer: string;
+}
+
+export type RadioAudioStatus = "available" | "missing_file" | "unsupported_format" | "unavailable";
+
+export interface RadioItem {
+  record: CorpusRecord;
+  has_audio: boolean;
+  audio_status: RadioAudioStatus;
+  audio_url: string | null;
+  media_type: string | null;
+}
+
+export interface RadioPage {
+  dataset_id: string;
+  contains_audio: boolean;
+  items: RadioItem[];
+  total: number;
+  limit: number;
+  offset: number;
 }

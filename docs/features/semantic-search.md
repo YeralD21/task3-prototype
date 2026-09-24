@@ -105,7 +105,7 @@ Content-Type: application/json
 }
 ```
 
-La respuesta contiene cada `CorpusRecord` completo y su `score` coseno, preservando `dataset_id`, `source_record_id` y procedencia. Los vectores de norma cero reciben score `0`. Se informan explícitamente dataset inexistente o no materializado, índice ausente o desactualizado, consulta vacía, límite inválido, índice incoherente y proveedor no disponible.
+La respuesta contiene la vista pública de cada registro (`PublicCorpusRecord`: sin `speaker_id` ni atributos del hablante) y su `score` coseno, preservando `dataset_id`, `source_record_id` y procedencia. Los vectores de norma cero reciben score `0`. Se informan explícitamente dataset inexistente o no materializado, índice ausente o desactualizado, consulta vacía, límite inválido, índice incoherente y proveedor no disponible.
 
 [Atlas Vivo](atlas-vivo.md) reutiliza `embeddings.npy` para proyectar el corpus a 2D sin recalcular embeddings y se invalida cuando este índice cambia.
 

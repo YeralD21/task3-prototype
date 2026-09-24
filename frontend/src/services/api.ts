@@ -5,6 +5,7 @@ import type {
   DatasetPlaybook,
   PlaybookDiscovery,
   PlaybookTaskId,
+  RadioPage,
   Filters,
   RecordFilters,
   SemanticSearchRequest,
@@ -136,4 +137,37 @@ export function playbookErrorMessage(error: unknown): string {
   if (error instanceof ApiError && error.status === 404)
     return "Este dataset no figura en el catálogo, por lo que no hay un Playbook disponible.";
   return "No pudimos cargar el Playbook. Comprueba la conexión e inténtalo nuevamente.";
+}
+
+export const RADIO_PAGE_SIZE = 20;
+
+export function buildRadioPath(datasetId: string, limit: number, offset: number): string {
+  const params = new URLSearchParams({ limit: String(limit), offset: String(offset) });
+  return `/datasets/${encodeURIComponent(datasetId)}/radio?${params}`;
+}
+
+export const getDatasetRadio = (
+  datasetId: string,
+  offset = 0,
+  limit: number = RADIO_PAGE_SIZE,
+  signal?: AbortSignal,
+) => request<RadioPage>(buildRadioPath(datasetId, limit, offset), signal);
+
+/** Solo acepta rutas del endpoint de audio controlado; nunca URLs ni rutas arbitrarias. */
+export function radioAudioSource(audioUrl: string | null): string | null {
+  const base = process.env.NEXT_PUBLIC_API_URL;
+  if (!base || !audioUrl || !/^\/api\/v1\/datasets\/[^/?#]+\/records\/[^/?#]+\/audio$/.test(audioUrl))
+    return null;
+  return base.replace(/\/$/, "") + audioUrl;
+}
+
+export const RADIO_NOT_LOCAL =
+  "Para escuchar el audio, primero debe existir una copia local procesada del dataset.";
+
+export function radioErrorMessage(error: unknown): string {
+  if (error instanceof ApiError) {
+    if (error.status === 404) return "Este dataset no figura en el catálogo.";
+    if (error.status === 409 && error.detail.includes("not available locally")) return RADIO_NOT_LOCAL;
+  }
+  return "No pudimos cargar Corpus Radio. Comprueba la conexión e inténtalo nuevamente.";
 }

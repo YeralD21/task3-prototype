@@ -7,6 +7,7 @@ import CorpusExplorer from "@/components/CorpusExplorer";
 import SemanticSearch from "@/components/SemanticSearch";
 import AtlasExplorer from "@/components/AtlasExplorer";
 import DatasetPlaybook from "@/components/DatasetPlaybook";
+import CorpusRadio from "@/components/CorpusRadio";
 import type { Dataset } from "@/types/dataset";
 export default function Detail({
   params,
@@ -67,6 +68,7 @@ export default function Detail({
           <CorpusExplorer dataset={dataset} />
           <SemanticSearch key={dataset.id} dataset={dataset} />
           <AtlasExplorer key={`atlas-${dataset.id}`} dataset={dataset} />
+          <CorpusRadio key={`radio-${dataset.id}`} dataset={dataset} />
           <DatasetPlaybook key={`playbook-${dataset.id}`} dataset={dataset} />
         </>
       )}

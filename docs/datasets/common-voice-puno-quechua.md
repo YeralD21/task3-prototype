@@ -61,4 +61,4 @@ El manifiesto contiene `cataloged: true` y `available_locally: false`. Por ello,
 
 ## Funcionalidades futuras
 
-Corpus Radio podrá usar las referencias locales de audio únicamente cuando el usuario haya montado una copia autorizada; esta iteración no reproduce ni transmite clips. Dataset Playbook podrá mostrar la utilidad ASR, versión, licencia, restricciones, procedencia y pasos de acceso oficial sin ofrecer una descarga duplicada.
+[Corpus Radio](../features/corpus-radio.md) usa las referencias locales de audio únicamente cuando el usuario ha montado e ingerido una copia autorizada bajo `data/raw/`; reproduce los clips desde esa ubicación sin copiarlos, no ofrece descarga y no expone identificadores ni atributos de hablantes. Dataset Playbook podrá mostrar la utilidad ASR, versión, licencia, restricciones, procedencia y pasos de acceso oficial sin ofrecer una descarga duplicada.

@@ -6,7 +6,7 @@ Prototipo open source para abrir, explorar, comprender y reutilizar datasets lin
 
 Muchos corpus valiosos son difíciles de descubrir y requieren descargar archivos, comprender formatos heterogéneos y escribir scripts antes de saber qué contienen. El proyecto busca reducir esa barrera mediante una arquitectura centrada en datasets, con procedencia, licencia y variante lingüística explícitas.
 
-El prototipo incluye un modelo canónico, Dataset Registry y adaptadores locales para Common Voice y AmericasNLP. Atlas Vivo proyecta el corpus a 2D y lo muestra como un mapa interactivo. Dataset Playbook explica, con reglas transparentes, para qué tareas es técnicamente compatible cada dataset, separando esa compatibilidad de los permisos de uso. Corpus Radio queda para una iteración posterior.
+El prototipo incluye un modelo canónico, Dataset Registry y adaptadores locales para Common Voice y AmericasNLP. Atlas Vivo proyecta el corpus a 2D y lo muestra como un mapa interactivo. Dataset Playbook explica, con reglas transparentes, para qué tareas es técnicamente compatible cada dataset, separando esa compatibilidad de los permisos de uso. Corpus Radio reproduce el audio de la copia local junto a su transcripción, sin copiarlo ni redistribuirlo.
 
 ## Arquitectura general
 
@@ -19,7 +19,7 @@ El prototipo incluye un modelo canónico, Dataset Registry y adaptadores locales
 - `docs/`: documentación de arquitectura.
 - `scripts/`: automatizaciones del proyecto.
 
-Consulta [la descripción de arquitectura](docs/architecture/overview.md), [el modelo canónico](docs/architecture/data-model.md), [el Dataset Registry](docs/architecture/dataset-registry.md), [Corpus Explorer](docs/features/corpus-explorer.md), [Atlas Vivo](docs/features/atlas-vivo.md) y [Dataset Playbook](docs/features/dataset-playbook.md).
+Consulta [la descripción de arquitectura](docs/architecture/overview.md), [el modelo canónico](docs/architecture/data-model.md), [el Dataset Registry](docs/architecture/dataset-registry.md), [Corpus Explorer](docs/features/corpus-explorer.md), [Atlas Vivo](docs/features/atlas-vivo.md), [Dataset Playbook](docs/features/dataset-playbook.md) y [Corpus Radio](docs/features/corpus-radio.md).
 
 ## Tecnologías
 
@@ -195,6 +195,15 @@ La **compatibilidad técnica se separa del permiso de uso**. Los permisos `null`
 
 Consulta [la guía del Playbook](docs/features/dataset-playbook.md).
 
+## Corpus Radio
+
+Corpus Radio reproduce registros con audio disponible localmente (inicialmente Common Voice Puno Quechua) mientras muestra la transcripción completa, la traducción si existe, el idioma, la variedad y la procedencia. El audio permanece en su ubicación original bajo `data/raw/`: no se descarga, no se copia a `data/processed/` y no se redistribuye.
+
+- `GET /api/v1/datasets/{dataset_id}/radio?limit=20&offset=0` lista registros con audio y su estado (`available`, `missing_file`, `unsupported_format`, `unavailable`), sin rutas del sistema.
+- `GET /api/v1/datasets/{dataset_id}/records/{source_record_id}/audio` sirve el clip con soporte de Range. El cliente nunca envía rutas: el backend resuelve el `AudioResource` y exige que el archivo quede dentro de la carpeta fuente de la ingestión y de `DATASET_RAW_PATH` (por defecto `data/raw`).
+
+La interfaz usa `<audio controls>` nativo, sin autoplay ni botón de descarga, con anterior/siguiente. Como el resto de la API pública, no expone `speaker_id` ni atributos del hablante (vista `PublicCorpusRecord`), y no hay sincronización palabra por palabra. AmericasNLP muestra «Este dataset no contiene audio.». Consulta [la guía de Corpus Radio](docs/features/corpus-radio.md).
+
 ## Estado actual
 
 En el detalle de cada dataset, la sección «Búsqueda semántica» permite enviar
@@ -203,4 +212,4 @@ Muestra hasta 10 registros con similitud semántica y trazabilidad. Requiere un
 índice local y un proveedor configurado; la interfaz explica si faltan o si el
 índice debe reconstruirse.
 
-El Registry cataloga Common Voice Scripted Speech 26.0 para Puno Quechua (`qxp`) y AmericasNLP 2021 Aymara–Español (`aym`/`es`), aunque los corpus no estén descargados. El frontend permite consultar el catálogo, filtrar datasets y explorar registros locales mediante búsqueda textual y paginación. Los adaptadores y el pipeline procesan copias locales obtenidas manualmente; la API descubre sus registros e índices semánticos bajo `data/processed/`. La búsqueda semántica está disponible mediante API y en la página de detalle. Atlas Vivo expone coordenadas 2D (PCA, o UMAP opcional) mediante `GET /api/v1/datasets/{dataset_id}/atlas` y se explora en la página de detalle con hover y selección; todavía no tiene clustering, zoom ni colores por tema. El Dataset Playbook evalúa cada dataset por tarea en la página de detalle y ofrece descubrimiento por tarea mediante API; el filtro «Uso previsto» del catálogo aún no usa el Playbook. No existen persistencia PostgreSQL, autenticación, reproducción de audio ni descarga automática.
+El Registry cataloga Common Voice Scripted Speech 26.0 para Puno Quechua (`qxp`) y AmericasNLP 2021 Aymara–Español (`aym`/`es`), aunque los corpus no estén descargados. El frontend permite consultar el catálogo, filtrar datasets y explorar registros locales mediante búsqueda textual y paginación. Los adaptadores y el pipeline procesan copias locales obtenidas manualmente; la API descubre sus registros e índices semánticos bajo `data/processed/`. La búsqueda semántica está disponible mediante API y en la página de detalle. Atlas Vivo expone coordenadas 2D (PCA, o UMAP opcional) mediante `GET /api/v1/datasets/{dataset_id}/atlas` y se explora en la página de detalle con hover y selección; todavía no tiene clustering, zoom ni colores por tema. El Dataset Playbook evalúa cada dataset por tarea en la página de detalle y ofrece descubrimiento por tarea mediante API; el filtro «Uso previsto» del catálogo aún no usa el Playbook. Corpus Radio reproduce audio local de forma controlada; no hay reproducción continua, filtros ni alineación temporal. Las respuestas públicas que incluyen registros (`/records`, búsqueda semántica, Atlas Vivo y Corpus Radio) usan una vista pública sin `speaker_id` ni atributos del hablante, sin modificar los registros canónicos almacenados. No existen persistencia PostgreSQL, autenticación, reproducción continua ni descarga automática de corpus o audio.

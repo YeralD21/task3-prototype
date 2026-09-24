@@ -165,7 +165,7 @@ Respuesta:
 }
 ```
 
-Cada elemento de `items` incluye el `CorpusRecord` completo en `record`, para que la interfaz muestre texto, traducción y procedencia sin otra petición. Los artefactos en disco no cambian: `coordinates.jsonl` sigue sin duplicar textos. El servicio une los puntos muestreados con los registros canónicos y comprueba que `source_record_id` coincida. Si un punto referencia un registro inexistente, responde `500` con un mensaje genérico.
+Cada elemento de `items` incluye en `record` la vista pública del registro (`PublicCorpusRecord`: sin `speaker_id` ni atributos del hablante), para que la interfaz muestre texto, traducción y procedencia sin otra petición. Los artefactos en disco no cambian: `coordinates.jsonl` sigue sin duplicar textos. El servicio une los puntos muestreados con los registros canónicos y comprueba que `source_record_id` coincida. Si un punto referencia un registro inexistente, responde `500` con un mensaje genérico.
 
 | Situación | Código |
 |---|---|

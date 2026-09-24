@@ -2,7 +2,7 @@
 
 from pydantic import BaseModel, Field
 
-from app.schemas.canonical import CorpusRecord
+from app.schemas.public import PublicCorpusRecord
 
 
 class SemanticSearchRequest(BaseModel):
@@ -12,7 +12,7 @@ class SemanticSearchRequest(BaseModel):
 
 
 class SemanticSearchResultItem(BaseModel):
-    record: CorpusRecord
+    record: PublicCorpusRecord
     score: float
 
 

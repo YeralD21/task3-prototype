@@ -4,7 +4,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.schemas.canonical import CorpusRecord
+from app.schemas.public import PublicCorpusRecord
 
 
 class AtlasPoint(BaseModel):
@@ -20,9 +20,9 @@ class AtlasPoint(BaseModel):
 
 
 class AtlasResponseItem(AtlasPoint):
-    """Punto del Atlas con el CorpusRecord completo para mostrarlo sin otra consulta."""
+    """Punto del Atlas con la vista pública del registro para mostrarlo sin otra consulta."""
 
-    record: CorpusRecord
+    record: PublicCorpusRecord
 
 
 class AtlasSampling(BaseModel):
